@@ -1,0 +1,87 @@
+  <div class="container">
+        <h1>ToDo List</h1>
+       
+              
+             
+           
+   
+
+           
+         <form action="/findbyname" method="get" class="form-group">
+            <h3>Найти привычку</h3>
+            <div>
+                 <label for="task">Введи название привычки, которую хочешь найти:</label>
+                 <input type="text"  name="findtask" required>
+            </div>
+            <button type="submit">Найти</button>
+        </form>
+        
+        
+        
+                   <h3>Результаты поиска:</h3>
+            
+               
+                <div>
+              
+            </div>
+    
+             </div>
+             
+
+             
+        
+
+        <form action="/add" method="post" class="form-group">
+            <h3>Добавить новую привычку</h3>
+            <div>
+                <label for="id">ID:</label>
+                <input type="number" min="1"id="id" name="id" required>
+            </div>
+            <div>
+                <label for="task">Задача:</label>
+                <input type="text" id="task" name="task" required>
+            </div>
+             <label for="comment">Коментарий:</label>
+                <input type="text" id="comment" name="comment" required>
+            </div>
+            <div>
+                <label for="status">Статус (выполнено):</label>
+                <input type="checkbox" id="status" name="status">
+            </div>
+            <button type="submit">Добавить</button>
+        </form>
+
+        <h3>Список задач</h3>
+   
+        
+        
+            <div>
+               
+            </div>
+
+            <div>
+                <form action="/starttask" method="post" style="display: inline;">
+                    <input type="hidden" name="taskid" value="{{.Id}}">
+                      <div>
+                <label for="id">Время на задачу:</label>
+                <input type="number" min="1"id="time" name="time" required>
+            </div>
+                    <button type="submit" class="status-btn">Начать выполнение задачи</button>
+                </form>
+                <form action="/changestatus" method="post" style="display: inline;">
+                    <input type="hidden" name="id" value="{{.Id}}">
+                    <button type="submit" class="status-btn">Изменить статус</button>
+                </form>
+                <form action="/delete" method="post" style="display: inline;">
+                    <input type="hidden" name="id" value="{{.Id}}">
+                    <button type="submit" class="delete-btn">Удалить</button>
+                </form>
+            </div>
+        </div>
+        {{else}}
+        <p>Задач нет</p>
+        {{end}}
+    </div>
+     <a href="/login">Выйти</a>
+</body>
+</html>
