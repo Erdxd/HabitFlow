@@ -59,6 +59,56 @@ func AddHabits(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/main", http.StatusSeeOther)
+
 	}
+	http.Redirect(w, r, "/main", http.StatusSeeOther)
+}
+func DeleteHabits(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		Id, err := strconv.Atoi(r.FormValue("Id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = database.DeleteHabits(db, Id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	http.Redirect(w, r, "/main", http.StatusSeeOther)
+}
+func ChangeStatusToday(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		Id, err := strconv.Atoi(r.FormValue("Id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = database.ChangeStatusToday(db, Id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	http.Redirect(w, r, "/main", http.StatusSeeOther)
+
+}
+func ReesetStatus(w http.ResponseWriter, r *http.Request) {
+	reset := make(chan model.HabitReset)
+	if r.Method == "POST" {
+		Id, err := strconv.Atoi(r.FormValue("Id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		go database.ChangeStatusToday(db, Id)
+		result := <-reset
+		if result.Error != nil {
+			http.Error(w, "Произошла ошибка", http.StatusInternalServerError)
+			return
+		}
+
+	}
+	http.Redirect(w, r, "/main", http.StatusSeeOther)
 }

@@ -11,3 +11,7 @@ type HabitFlow struct {
 	Last_At      time.Time `db:"last_at"`
 	Deleted_At   time.Time `db:"deleted_at"`
 }
+type HabitReset struct {
+	Id    int
+	Error error
+}
