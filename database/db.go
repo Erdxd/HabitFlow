@@ -53,10 +53,10 @@ func ChangeStatusToday(db *sql.DB, id int) error {
 	}
 	return nil
 }
-func ResetStatus(db *sql.DB, id int, reset chan model.HabitReset) {
+func ResetStatus(id int, reset chan model.HabitReset) {
 
 	go func() error {
-		time.Sleep(24 * time.Hour)
+		time.Sleep(24 * time.Second)
 		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1"`)
 		_, err := db.Exec(SqlStatement, id)
 		if err != nil {
