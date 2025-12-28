@@ -8,7 +8,7 @@ import (
 )
 
 func ChechHabits() ([]model.HabitFlow, error) {
-	rows, err := db.Query(`SELECT id, habit_name, status_today FROM "HabitFlow WHERE user_id = $1`)
+	rows, err := db.Query(`SELECT id, habit_name, status_today FROM "HabitFlow"`)
 
 	if err != nil {
 		log.Println("Can't SELECT data by your tables")

@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,7 +13,7 @@ import (
 )
 
 var db *sql.DB
-var tmplmain = template.Must(template.ParseFiles("templates.main.html"))
+var tmplmain = template.Must(template.ParseFiles("templates/main.html"))
 
 func main() {
 	var err error
@@ -20,17 +21,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	http.HandleFunc("/main", Mainpage)
+	http.HandleFunc("/", Mainpage)
 	http.HandleFunc("/add", AddHabits)
+	fmt.Println("localhost:8080")
 	err = http.ListenAndServe("0.0.0.0:8080", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }
 func Mainpage(w http.ResponseWriter, r *http.Request) {
 	Habits, err := database.ChechHabits()
 	if err != nil {
-		http.Error(w, "Fail", 0)
+		http.Error(w, "Fail", http.StatusSeeOther)
 		return
 	}
 	data := struct {
