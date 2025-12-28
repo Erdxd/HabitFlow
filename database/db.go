@@ -46,7 +46,7 @@ func DeleteHabits(db *sql.DB, id int) error {
 
 }
 func ChangeStatusToday(db *sql.DB, id int) error {
-	SqlStatement := (`UPDATE "HabitFlow SET status_today = true WHERE id = $1"`)
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true WHERE id = $1"`)
 	_, err := db.Exec(SqlStatement, id)
 	if err != nil {
 		return err
@@ -66,4 +66,12 @@ func ResetStatus(id int, reset chan model.HabitReset) {
 
 		return nil
 	}()
+}
+func AddStreak(db *sql.DB, id int) error {
+	SqlStatement := (`UPDATE "HabitFlow" SET streak = 1 WHERE id = $1"`)
+	_, err := db.Exec(SqlStatement, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -107,6 +107,8 @@ func ReesetStatus(w http.ResponseWriter, r *http.Request) {
 		if result.Error != nil {
 			http.Error(w, "Произошла ошибка", http.StatusInternalServerError)
 			return
+		} else {
+			database.AddStreak(db, Id)
 		}
 
 	}
