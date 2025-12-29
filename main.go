@@ -93,6 +93,12 @@ func ChangeStatusToday(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		streak, err := database.SelectStreak(db, Id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		database.AddStreak(db, Id, streak)
 	}
 	http.Redirect(w, r, "/main", http.StatusSeeOther)
 
