@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strconv"
 	"text/template"
-	"time"
 	"z/database"
 	"z/model"
 )
@@ -23,6 +22,10 @@ func main() {
 	}
 	http.HandleFunc("/", Mainpage)
 	http.HandleFunc("/add", AddHabits)
+	http.HandleFunc("/delete", DeleteHabits)
+	http.HandleFunc("/change", ChangeStatusToday)
+	http.HandleFunc("/resetstatus", ResetStatus)
+
 	fmt.Println("localhost:8080")
 	err = http.ListenAndServe("0.0.0.0:8080", nil)
 	if err != nil {
@@ -31,40 +34,50 @@ func main() {
 
 }
 func Mainpage(w http.ResponseWriter, r *http.Request) {
-	Habits, err := database.ChechHabits()
+	Habits, err := database.CheckHabits()
 	if err != nil {
 		http.Error(w, "Fail", http.StatusSeeOther)
 		return
 	}
 	data := struct {
-		TasksAll   []model.HabitFlow
+		HabitAll   []model.HabitFlow
 		SearchTask []model.HabitFlow
 	}{
-		TasksAll:   Habits,
+		HabitAll: Habits,
+
 		SearchTask: nil,
 	}
 	tmplmain.Execute(w, data)
 }
 func AddHabits(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		Id, _ := strconv.Atoi(r.FormValue("Id"))
+		Id, err := strconv.Atoi(r.FormValue("Id"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-		Habit_Name := r.FormValue("Habiit_Name")
+		Habit_Name := r.FormValue("Habit_Name")
 		Status_Today := r.FormValue("Status_Today") == "on"
+		Streak, err := strconv.Atoi(r.FormValue("Streak"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		Habit := model.HabitFlow{
 			Id:           Id,
 			Habit_Name:   Habit_Name,
 			Status_Today: Status_Today,
-			Created_At:   time.Now(),
+			Streak:       Streak,
 		}
-		err := database.AddHabit(db, Habit)
+		err = database.AddHabit(db, Habit)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 	}
-	http.Redirect(w, r, "/main", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
@@ -79,7 +92,7 @@ func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	http.Redirect(w, r, "/main", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 func ChangeStatusToday(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
@@ -100,13 +113,14 @@ func ChangeStatusToday(w http.ResponseWriter, r *http.Request) {
 		}
 		database.AddStreak(db, Id, streak)
 	}
-	http.Redirect(w, r, "/main", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }
-func ReesetStatus(w http.ResponseWriter, r *http.Request) {
+func ResetStatus(w http.ResponseWriter, r *http.Request) {
 	reset := make(chan model.HabitReset)
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
+		Streak, err := strconv.Atoi((r.FormValue("Streak")))
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -117,9 +131,9 @@ func ReesetStatus(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Произошла ошибка", http.StatusInternalServerError)
 			return
 		} else {
-			database.AddStreak(db, Id)
+			database.AddStreak(db, Id, Streak)
 		}
 
 	}
-	http.Redirect(w, r, "/main", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

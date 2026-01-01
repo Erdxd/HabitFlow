@@ -1,19 +1,132 @@
-  <div class="container">
-        <h1>HabiFlow</h1>
-       
-              
-             
-           
-   
+<!DOCTYPE html>
+<html lang="ru">
 
-           
-         <form action="/findbyname" method="get" class="form-group">
-            <h3>Найти привычку</h3>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HabitFlow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgb(214, 22, 22);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+         .coment {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task.completed {
+            background-color: #f0f0f0;
+        }
+        .task.completed .task-name {
+            text-decoration: line-through;
+            color: #666;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        .status-btn {
+            background-color: #2196F3;
+        }
+        .status-btn:hover {
+            background-color: #0b7dda;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    
+      <form action="/add" method="post" class="form-group">
+            <h3>Добавить новую привычку</h3>
             <div>
-                 <label for="task">Введи название привычки, которую хочешь найти:</label>
-                 <input type="text"  name="findtask" required>
+                <label for="Id">ID:</label>
+                <input type="number" min="1"id="Id" name="Id" required>
             </div>
-            <button type="submit">Найти</button>
+            <div>
+                <label for="Habit_Name">Привычка:</label>
+                <input type="text" id="Habit_Name" name="Habit_Name" required>
+            </div>
+            <div>
+                <label for="Streak">Сколько дней занимаетесь:</label>
+                <input type="number" min="0"id="Streak" name="Streak" required>
+            </div>
+            <div>
+                <label for="Status_Today">Статус (выполнено):</label>
+                <input type="checkbox" id="Status_Today" name="Status_Today">
+            </div>
+            <button type="submit">Добавить</button>
         </form>
-        
-        
+
+        <h3>Список привычек</h3>
+   
+        {{range .HabitAll}}
+        <div class="task {{if .Status_Today}}completed{{end}}">
+            <div>
+                <span>Id: {{.Id}}</span> 
+                <span>Привычка: {{.Habit_Name}}</span> 
+                 <span>Дней подряд: {{.Streak}}</span> 
+
+                
+                <span>Статус: {{if .Status_Today}}Выполнено{{else}}Не выполнено{{end}}</span>
+            </div>
+            </div>
+        {{end}}
+            
+     
+</body>
+</html>

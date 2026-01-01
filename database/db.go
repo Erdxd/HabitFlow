@@ -7,7 +7,7 @@ import (
 	"z/model"
 )
 
-func ChechHabits() ([]model.HabitFlow, error) {
+func CheckHabits() ([]model.HabitFlow, error) {
 	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow"`)
 
 	if err != nil {
@@ -19,7 +19,7 @@ func ChechHabits() ([]model.HabitFlow, error) {
 	var tasks []model.HabitFlow
 	for rows.Next() {
 		var t model.HabitFlow
-		err := rows.Scan(&t.Id, &t.Habit_Name, &t.Status_Today, &t.Created_At, &t.Last_At, &t.Deleted_At)
+		err := rows.Scan(&t.Id, &t.Habit_Name, &t.Status_Today, &t.Streak)
 		if err != nil {
 			return nil, err
 		}
@@ -29,8 +29,8 @@ func ChechHabits() ([]model.HabitFlow, error) {
 
 }
 func AddHabit(db *sql.DB, Habits model.HabitFlow) error {
-	SqlStatement := (`INSERT INTO "HabitFlow" (id, habit_name, status_today, created_at)  VALUES ($1,$2 ,$3,$4) `)
-	_, err := db.Exec(SqlStatement, Habits.Id, Habits.Habit_Name, Habits.Status_Today)
+	SqlStatement := (`INSERT INTO "HabitFlow" (id, habit_name, status_today, streak)  VALUES ($1,$2 ,$3,$4) `)
+	_, err := db.Exec(SqlStatement, Habits.Id, Habits.Habit_Name, Habits.Status_Today, Habits.Streak)
 	if err != nil {
 		return err
 	}
