@@ -53,11 +53,11 @@ func ChangeStatusToday(db *sql.DB, id int) error {
 	}
 	return nil
 }
-func ResetStatus(id int, reset chan model.HabitReset) {
+func ResetStatus(db *sql.DB, id int, reset chan model.HabitReset) {
 
 	go func() error {
-		time.Sleep(24 * time.Second)
-		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1"`)
+		time.Sleep(20 * time.Second)
+		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1`)
 		_, err := db.Exec(SqlStatement, id)
 		if err != nil {
 			return err
@@ -68,18 +68,10 @@ func ResetStatus(id int, reset chan model.HabitReset) {
 	}()
 }
 func AddStreak(db *sql.DB, id int, streak int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET streak = $1 WHERE id = $2"`)
+	SqlStatement := (`UPDATE "HabitFlow" SET streak = $1 WHERE id = $2`)
 	_, err := db.Exec(SqlStatement, streak+1, id)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-func SelectStreak(db *sql.DB, id int) (int, error) {
-	var streak int
-	err := db.QueryRow(`SELECT streak FROM "HabitFlow" WHERE id = $1`, id).Scan(&streak)
-	if err != nil {
-		return 0, err
-	}
-	return streak, nil
 }

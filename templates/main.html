@@ -111,6 +111,8 @@
             </div>
             <button type="submit">Добавить</button>
         </form>
+        
+            
 
         <h3>Список привычек</h3>
    
@@ -120,7 +122,17 @@
                 <span>Id: {{.Id}}</span> 
                 <span>Привычка: {{.Habit_Name}}</span> 
                  <span>Дней подряд: {{.Streak}}</span> 
-
+            <div>
+                    <form action="/delete" method="post" style="display: inline;">
+                    <input type="hidden" name="Id" value="{{.Id}}">
+                    <button type="submit" class="delete-btn">Удалить</button>
+                </form>
+                     <form action="/change" method="post" style="display: inline;">
+                    <input type="hidden" name="Id" value="{{.Id}}">
+                    <input type="hidden" name="Streak" value="{{.Streak}}">
+                    <button type="submit" class="change-btn">Изменить статус на сегодня</button>
+                
+                   
                 
                 <span>Статус: {{if .Status_Today}}Выполнено{{else}}Не выполнено{{end}}</span>
             </div>
