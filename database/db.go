@@ -46,7 +46,7 @@ func DeleteHabits(db *sql.DB, id int) error {
 
 }
 func ChangeStatusToday(db *sql.DB, id int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true WHERE id = $1"`)
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true WHERE id = $1`)
 	_, err := db.Exec(SqlStatement, id)
 	if err != nil {
 		return err
@@ -56,7 +56,7 @@ func ChangeStatusToday(db *sql.DB, id int) error {
 func ResetStatus(db *sql.DB, id int, reset chan model.HabitReset) {
 
 	go func() error {
-		time.Sleep(20 * time.Second)
+		time.Sleep(4 * time.Second)
 		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1`)
 		_, err := db.Exec(SqlStatement, id)
 		if err != nil {

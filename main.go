@@ -24,7 +24,6 @@ func main() {
 	http.HandleFunc("/add", AddHabits)
 	http.HandleFunc("/delete", DeleteHabits)
 	http.HandleFunc("/change", ResetStatus)
-
 	fmt.Println("localhost:8080")
 	err = http.ListenAndServe("0.0.0.0:8080", nil)
 	if err != nil {
@@ -94,7 +93,7 @@ func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 }
 
 func ResetStatus(w http.ResponseWriter, r *http.Request) {
-	reset := make(chan model.HabitReset)
+
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
 		Streak, err := strconv.Atoi(r.FormValue("Streak"))
@@ -103,13 +102,20 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		err = database.ChangeStatusToday(db, Id)
-		go database.ResetStatus(db, Id, reset)
-		result := <-reset
-		if result.Error != nil {
-			http.Error(w, "Произошла ошибка", http.StatusInternalServerError)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		database.AddStreak(db, Id, Streak)
+		go func(Id int, Streak int) {
+			reset := make(chan model.HabitReset)
+			database.ResetStatus(db, Id, reset)
+			result := <-reset
+			if result.Error == nil {
+				database.AddStreak(db, Id, Streak)
+			}
+
+		}(Id, Streak)
+
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
