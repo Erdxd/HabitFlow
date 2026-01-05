@@ -41,6 +41,7 @@
             height: 46px;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.15);
+            overflow: hidden;
         }
 
         .field.short {
@@ -63,8 +64,34 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
+        /* КНОПКА */
+        .submit-btn {
+            width: 100%;
+            height: 46px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+
+            background: linear-gradient(135deg, #6c63ff, #857dff);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.35);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
         .spacer {
-            height: 20px;
+            height: 10px;
         }
     </style>
 </head>
@@ -93,9 +120,9 @@
 
         <div class="spacer"></div>
 
-        <div class="field">
-            <input type="submit" value="Зарегистрироваться">
-        </div>
+        <button type="submit" class="submit-btn">
+            Зарегистрироваться
+        </button>
     </form>
 
 </body>
