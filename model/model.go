@@ -16,3 +16,9 @@ type HabitReset struct {
 	Id    int
 	Error error
 }
+type User struct {
+	Id_user  int    `db:"id_user"`
+	Username string `db:"username"`
+	Email    string `db:"email"`
+	Password string `db:"passworduser"`
+}
