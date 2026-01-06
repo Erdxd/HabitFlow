@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitFlow</title>
+    {{ range .HabitAll }}
+    {{ if .Status_Today }}
+        <meta http-equiv="refresh" content="5">
+    {{ end }}
+{{ end }}
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -133,7 +139,7 @@
                     <button type="submit" class="change-btn">Изменить статус на сегодня</button>
                 
                    
-                
+                </div>
                 <span>Статус: {{if .Status_Today}}Выполнено{{else}}Не выполнено{{end}}</span>
             </div>
             </div>
