@@ -15,6 +15,7 @@ import (
 var db *sql.DB
 var tmplmain = template.Must(template.ParseFiles("templates/main.html"))
 var tmplreg = template.Must(template.ParseFiles("templates/register.html"))
+var tmpllog = template.Must(template.ParseFiles("templates/login.html"))
 
 func main() {
 	var err error
@@ -26,7 +27,9 @@ func main() {
 	http.HandleFunc("/add", AddHabits)
 	http.HandleFunc("/delete", DeleteHabits)
 	http.HandleFunc("/change", ResetStatus)
-	http.HandleFunc("/register", RegiterPageHandler)
+	http.HandleFunc("/register", RegisterPageHandler)
+	http.HandleFunc("/login", LoginPageHandler)
+
 	fmt.Println("localhost:8080")
 	err = http.ListenAndServe("0.0.0.0:8080", nil)
 	if err != nil {
@@ -35,7 +38,22 @@ func main() {
 
 }
 func Mainpage(w http.ResponseWriter, r *http.Request) {
-	Habits, err := database.CheckHabits()
+	cookie, err := r.Cookie("id_user")
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+	Id_user, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+
+	if Id_user == 0 {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+
+	Habits, err := database.CheckHabits(Id_user)
 	if err != nil {
 		http.Error(w, "Fail", http.StatusSeeOther)
 		return
@@ -51,6 +69,21 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 	tmplmain.Execute(w, data)
 }
 func AddHabits(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("id_user")
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+	Id_user, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+
+	if Id_user == 0 {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
 		if err != nil {
@@ -70,7 +103,7 @@ func AddHabits(w http.ResponseWriter, r *http.Request) {
 			Status_Today: Status_Today,
 			Streak:       Streak,
 		}
-		err = database.AddHabit(db, Habit)
+		err = database.AddHabit(db, Habit, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -80,6 +113,21 @@ func AddHabits(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 func DeleteHabits(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("id_user")
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+	Id_user, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+
+	if Id_user == 0 {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
 		if err != nil {
@@ -96,6 +144,20 @@ func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 }
 
 func ResetStatus(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("id_user")
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+	Id_user, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+
+	if Id_user == 0 {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
 
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
@@ -122,7 +184,7 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-func RegiterPageHandler(w http.ResponseWriter, r *http.Request) {
+func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		NameUser := r.FormValue("username")
 		Email := r.FormValue("email")
@@ -149,5 +211,36 @@ func RegiterPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmplreg.Execute(w, nil)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+}
+func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		Login := r.FormValue("login")
+		Password := r.FormValue("password")
+		passwordfromdb, err := account.Login(db, Login)
+		if err != nil {
+			http.Error(w, "Пользователя не существует", http.StatusInternalServerError)
+			return
+		}
+		if passwordfromdb != Password {
+			http.Error(w, "Неверный пароль", http.StatusInternalServerError)
+			return
+		} else if passwordfromdb == Password {
+			Id_user, err := account.GetUserId(db, Login)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			http.SetCookie(w, &http.Cookie{
+				Name:  "Id_user",
+				Value: strconv.Itoa(Id_user),
+				Path:  "/",
+			})
+
+		}
+
+	}
+	tmpllog.Execute(w, nil)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }

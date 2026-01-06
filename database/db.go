@@ -7,8 +7,8 @@ import (
 	"z/model"
 )
 
-func CheckHabits() ([]model.HabitFlow, error) {
-	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow"`)
+func CheckHabits(Id_user int) ([]model.HabitFlow, error) {
+	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE id_user = $1`, Id_user)
 
 	if err != nil {
 		log.Println("Can't SELECT data by your tables")
@@ -28,9 +28,9 @@ func CheckHabits() ([]model.HabitFlow, error) {
 	return tasks, nil
 
 }
-func AddHabit(db *sql.DB, Habits model.HabitFlow) error {
-	SqlStatement := (`INSERT INTO "HabitFlow" (id, habit_name, status_today, streak)  VALUES ($1,$2 ,$3,$4) `)
-	_, err := db.Exec(SqlStatement, Habits.Id, Habits.Habit_Name, Habits.Status_Today, Habits.Streak)
+func AddHabit(db *sql.DB, Habits model.HabitFlow, Id_user int) error {
+	SqlStatement := (`INSERT INTO "HabitFlow" (id, habit_name, status_today, streak)  VALUES ($1,$2 ,$3,$4, $5)`)
+	_, err := db.Exec(SqlStatement, Habits.Id, Habits.Habit_Name, Habits.Status_Today, Habits.Streak, Id_user)
 	if err != nil {
 		return err
 	}
