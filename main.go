@@ -7,12 +7,14 @@ import (
 	"net/http"
 	"strconv"
 	"text/template"
+	"z/account"
 	"z/database"
 	"z/model"
 )
 
 var db *sql.DB
 var tmplmain = template.Must(template.ParseFiles("templates/main.html"))
+var tmplreg = template.Must(template.ParseFiles("templates/register.html"))
 
 func main() {
 	var err error
@@ -24,7 +26,7 @@ func main() {
 	http.HandleFunc("/add", AddHabits)
 	http.HandleFunc("/delete", DeleteHabits)
 	http.HandleFunc("/change", ResetStatus)
-
+	http.HandleFunc("/register", RegiterPageHandler)
 	fmt.Println("localhost:8080")
 	err = http.ListenAndServe("0.0.0.0:8080", nil)
 	if err != nil {
@@ -94,7 +96,7 @@ func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 }
 
 func ResetStatus(w http.ResponseWriter, r *http.Request) {
-	reset := make(chan model.HabitReset)
+
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
 		Streak, err := strconv.Atoi(r.FormValue("Streak"))
@@ -103,13 +105,49 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		err = database.ChangeStatusToday(db, Id)
-		go database.ResetStatus(db, Id, reset)
-		result := <-reset
-		if result.Error != nil {
-			http.Error(w, "Произошла ошибка", http.StatusInternalServerError)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		database.AddStreak(db, Id, Streak)
+		go func(Id int, Streak int) {
+			reset := make(chan model.HabitReset)
+			database.ResetStatus(db, Id, reset)
+			result := <-reset
+			if result.Error == nil {
+				database.AddStreak(db, Id, Streak)
+			}
+
+		}(Id, Streak)
+
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+func RegiterPageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		NameUser := r.FormValue("username")
+		Email := r.FormValue("email")
+		Password := r.FormValue("password")
+		PasswordRep := r.FormValue("password_repeat")
+		if Password != PasswordRep {
+			http.Error(w, "Пароли не совпадают", http.StatusInternalServerError)
+			return
+		} else if Password == PasswordRep {
+
+			User := model.User{
+				Username: NameUser,
+				Email:    Email,
+				Password: Password,
+			}
+			err := account.Register(db, User)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+	}
+
+	tmplreg.Execute(w, nil)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
 }
