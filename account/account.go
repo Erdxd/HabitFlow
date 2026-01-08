@@ -27,7 +27,7 @@ func Login(db *sql.DB, Username string) (string, error) {
 func GetUserId(db *sql.DB, Username string) (int, error) {
 	var Id_user int
 	Sqlstatement := (`SELECT id_user FROM "users" WHERE username = $1`)
-	err := db.QueryRow(Sqlstatement).Scan(&Id_user)
+	err := db.QueryRow(Sqlstatement, Username).Scan(&Id_user)
 	if err != nil {
 		return 0, err
 	}

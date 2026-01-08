@@ -55,7 +55,7 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 
 	Habits, err := database.CheckHabits(Id_user)
 	if err != nil {
-		http.Error(w, "Fail", http.StatusSeeOther)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	data := struct {
@@ -69,7 +69,7 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 	tmplmain.Execute(w, data)
 }
 func AddHabits(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("id_user")
+	cookie, err := r.Cookie("d_user")
 	if err != nil {
 		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
 		return
@@ -232,15 +232,15 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			http.SetCookie(w, &http.Cookie{
-				Name:  "Id_user",
+				Name:  "id_user",
 				Value: strconv.Itoa(Id_user),
 				Path:  "/",
 			})
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 
 		}
 
 	}
 	tmpllog.Execute(w, nil)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
 
 }

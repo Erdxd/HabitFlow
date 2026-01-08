@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HabitFlow</title>
-<<<<<<< HEAD
-=======
-    {{ range .HabitAll }}
-    {{ if .Status_Today }}
-        <meta http-equiv="refresh" content="5">
-    {{ end }}
-{{ end }}
->>>>>>> aa4eb1f76a45bf3693ab79f5638da956a9c89858
 
     <style>
         * {
@@ -193,30 +185,10 @@
         <h3>Список привычек</h3>
 
         {{range .HabitAll}}
-<<<<<<< HEAD
         <div class="habit {{if .Status_Today}}completed{{end}}">
             <div class="habit-info">
                 <span><b>{{.Habit_Name}}</b></span>
                 <span>ID: {{.Id}} · Дней подряд: {{.Streak}}</span>
-=======
-        <div class="task {{if .Status_Today}}completed{{end}}">
-            <div>
-                <span>Id: {{.Id}}</span> 
-                <span>Привычка: {{.Habit_Name}}</span> 
-                 <span>Дней подряд: {{.Streak}}</span> 
-            <div>
-                    <form action="/delete" method="post" style="display: inline;">
-                    <input type="hidden" name="Id" value="{{.Id}}">
-                    <button type="submit" class="delete-btn">Удалить</button>
-                </form>
-                     <form action="/change" method="post" style="display: inline;">
-                    <input type="hidden" name="Id" value="{{.Id}}">
-                    <input type="hidden" name="Streak" value="{{.Streak}}">
-                    <button type="submit" class="change-btn">Изменить статус на сегодня</button>
-                
-                   
-                </div>
->>>>>>> aa4eb1f76a45bf3693ab79f5638da956a9c89858
                 <span>Статус: {{if .Status_Today}}Выполнено{{else}}Не выполнено{{end}}</span>
             </div>
 

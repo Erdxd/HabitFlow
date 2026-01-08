@@ -8,7 +8,7 @@ import (
 )
 
 func CheckHabits(Id_user int) ([]model.HabitFlow, error) {
-	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE id_user = $1`, Id_user)
+	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE user_id = $1`, Id_user)
 
 	if err != nil {
 		log.Println("Can't SELECT data by your tables")
@@ -56,7 +56,7 @@ func ChangeStatusToday(db *sql.DB, id int) error {
 func ResetStatus(db *sql.DB, id int, reset chan model.HabitReset) {
 
 	go func() error {
-		time.Sleep(4 * time.Second)
+		time.Sleep(24 * time.Hour)
 		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1`)
 		_, err := db.Exec(SqlStatement, id)
 		if err != nil {
