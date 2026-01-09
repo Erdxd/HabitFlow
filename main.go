@@ -69,14 +69,14 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 	tmplmain.Execute(w, data)
 }
 func AddHabits(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("d_user")
+	cookie, err := r.Cookie("id_user")
 	if err != nil {
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	Id_user, err := strconv.Atoi(cookie.Value)
 	if err != nil {
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -115,7 +115,7 @@ func AddHabits(w http.ResponseWriter, r *http.Request) {
 func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	Id_user, err := strconv.Atoi(cookie.Value)
@@ -134,7 +134,7 @@ func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = database.DeleteHabits(db, Id)
+		err = database.DeleteHabits(db, Id, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -166,14 +166,14 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = database.ChangeStatusToday(db, Id)
+		err = database.ChangeStatusToday(db, Id, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		go func(Id int, Streak int) {
 			reset := make(chan model.HabitReset)
-			database.ResetStatus(db, Id, reset)
+			database.ResetStatus(db, Id, reset, Id_user)
 			result := <-reset
 			if result.Error == nil {
 				database.AddStreak(db, Id, Streak)
