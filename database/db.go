@@ -8,7 +8,7 @@ import (
 )
 
 func CheckHabits(Id_user int) ([]model.HabitFlow, error) {
-	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE id_user = $1`, Id_user)
+	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE user_id = $1`, Id_user)
 
 	if err != nil {
 		log.Println("Can't SELECT data by your tables")
@@ -29,36 +29,36 @@ func CheckHabits(Id_user int) ([]model.HabitFlow, error) {
 
 }
 func AddHabit(db *sql.DB, Habits model.HabitFlow, Id_user int) error {
-	SqlStatement := (`INSERT INTO "HabitFlow" (id, habit_name, status_today, streak)  VALUES ($1,$2 ,$3,$4, $5)`)
+	SqlStatement := (`INSERT INTO "HabitFlow" (id, habit_name, status_today, streak, user_id) VALUES ($1,$2 ,$3,$4, $5)`)
 	_, err := db.Exec(SqlStatement, Habits.Id, Habits.Habit_Name, Habits.Status_Today, Habits.Streak, Id_user)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func DeleteHabits(db *sql.DB, id int) error {
-	SqlStatement := (`DELETE FROM "HabitFlow" WHERE id = $1 `)
-	_, err := db.Exec(SqlStatement, id)
+func DeleteHabits(db *sql.DB, id int, user_id int) error {
+	SqlStatement := (`DELETE FROM "HabitFlow" WHERE id = $1 AND user_id = $2 `)
+	_, err := db.Exec(SqlStatement, id, user_id)
 	if err != nil {
 		return err
 	}
 	return nil
 
 }
-func ChangeStatusToday(db *sql.DB, id int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true WHERE id = $1`)
-	_, err := db.Exec(SqlStatement, id)
+func ChangeStatusToday(db *sql.DB, id int, user_id int) error {
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true WHERE id = $1 AND user_id = $2`)
+	_, err := db.Exec(SqlStatement, id, user_id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func ResetStatus(db *sql.DB, id int, reset chan model.HabitReset) {
+func ResetStatus(db *sql.DB, id int, reset chan model.HabitReset, user_id int) {
 
 	go func() error {
-		time.Sleep(4 * time.Second)
-		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1`)
-		_, err := db.Exec(SqlStatement, id)
+		time.Sleep(24 * time.Hour)
+		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1 AND user_id = $2`)
+		_, err := db.Exec(SqlStatement, id, user_id)
 		if err != nil {
 			return err
 		}
