@@ -18,7 +18,7 @@ func Schedule(bot *tgbotapi.BotAPI, db *sql.DB) {
 	}
 
 	s := gocron.NewScheduler(anadyrLocation)
-	_, err = s.Every(1).Day().At("21:40").Do(func() {
+	_, err = s.Every(1).Day().At("07:00").Do(func() {
 		sendDailyNotifications(bot, db)
 	})
 	if err != nil {
