@@ -17,8 +17,9 @@ type HabitReset struct {
 	Error error
 }
 type User struct {
-	Id_user  int    `db:"id_user"`
-	Username string `db:"username"`
-	Email    string `db:"email"`
-	Password string `db:"passworduser"`
+	Id_user          int    `db:"id_user"`
+	Username         string `db:"username"`
+	Email            string `db:"email"`
+	Password         string `db:"passworduser"`
+	Telegram_chat_id int64  `db:"telegram_chat_id"`
 }
