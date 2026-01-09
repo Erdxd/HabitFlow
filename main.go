@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"text/template"
 	"z/account"
+	"z/bot"
 	"z/database"
 	"z/model"
+
+	"github.com/joho/godotenv"
 )
 
 var db *sql.DB
@@ -23,6 +27,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	godotenv.Load("bot.env")
+
+	token := os.Getenv("TELEGRAM_BOT_TOKEN")
+	bot1, err := bot.InitBot(token)
+	if err != nil {
+		log.Fatal(err)
+	}
+	go bot.HandleMessages(bot1, db)
+	go bot.Schedule(bot1, db)
+
 	http.HandleFunc("/", Mainpage)
 	http.HandleFunc("/add", AddHabits)
 	http.HandleFunc("/delete", DeleteHabits)
