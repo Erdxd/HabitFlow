@@ -33,3 +33,8 @@ func GetUserId(db *sql.DB, Username string) (int, error) {
 	}
 	return Id_user, nil
 }
+func SaveTelegramChatID(db *sql.DB, userID int, chatID int64) error {
+	Sqlstatement := (`UPDATE "users" SET telegram_chat_id = $1 WHERE id_user = $2`)
+	_, err := db.Exec(Sqlstatement, chatID, userID)
+	return err
+}
