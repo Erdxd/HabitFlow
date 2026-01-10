@@ -77,7 +77,7 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 					bot.Send(msg)
 				}
 
-				habits, err := database.CheckHabits(User_id)
+				habits, err := database.CheckHabits(db, User_id)
 				if err != nil {
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Не удалось получить ваши привычки:")
 					bot.Send(msg)
@@ -95,7 +95,7 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 					bot.Send(msg)
 				}
 
-				habits, err := database.CheckHabits(User_id)
+				habits, err := database.CheckHabits(db, User_id)
 				if err != nil {
 					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Не удалось получить ваши привычки:")
 					bot.Send(msg)

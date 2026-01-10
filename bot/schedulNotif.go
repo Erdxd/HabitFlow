@@ -44,7 +44,7 @@ func sendDailyNotifications(bot *tgbotapi.BotAPI, db *sql.DB) {
 			continue
 		}
 
-		habits, err := database.CheckHabits(user.Id_user)
+		habits, err := database.CheckHabits(db, user.Id_user)
 		if err != nil {
 			log.Printf("Ошибка получения привычек для пользователя %d: %v", user.Id_user, err)
 			continue
