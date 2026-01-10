@@ -220,12 +220,10 @@ func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 
 	tmplreg.Execute(w, nil)
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
-
 }
 func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {

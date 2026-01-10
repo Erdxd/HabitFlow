@@ -54,6 +54,7 @@ func sendDailyNotifications(bot *tgbotapi.BotAPI, db *sql.DB) {
 			log.Printf("Ошибка отправки уведомления пользователю %d: %v", user.Id_user, err)
 		} else {
 			log.Printf("Успешно отправлено уведомление пользователю %d", user.Id_user)
+			SendKeyboard(bot, user.Telegram_chat_id)
 		}
 	}
 }

@@ -69,6 +69,7 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "✅ Чат успешно привязан! Теперь ты будешь получать уведомления о привычках.")
 				bot.Send(msg)
+				SendKeyboard(bot, update.Message.Chat.ID)
 			} else if update.Message.Command() == "GetTask" {
 				User_id, err := account.GetUserIdByTgID(db, update.Message.Chat.ID)
 				if err != nil {
@@ -86,6 +87,7 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 					continue
 				}
 				SendHabitNotification(bot, update.Message.Chat.ID, habits)
+				SendKeyboard(bot, update.Message.Chat.ID)
 			} else if update.Message.Text == "📋 Мои привычки" {
 				User_id, err := account.GetUserIdByTgID(db, update.Message.Chat.ID)
 				if err != nil {
@@ -103,6 +105,7 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 					continue
 				}
 				SendHabitNotification(bot, update.Message.Chat.ID, habits)
+				SendKeyboard(bot, update.Message.Chat.ID)
 			}
 		}
 
