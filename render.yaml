@@ -1,0 +1,10 @@
+
+services:
+  - type: web
+    name: habitflow
+    env: go
+    buildCommand: go build -o habitflow
+    startCommand: ./habitflow
+    envVars:
+      - key: PORT
+        value: 8080

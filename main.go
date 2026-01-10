@@ -45,8 +45,12 @@ func main() {
 	http.HandleFunc("/register", RegisterPageHandler)
 	http.HandleFunc("/login", LoginPageHandler)
 
-	fmt.Println("localhost:8080")
-	err = http.ListenAndServe("0.0.0.0:8080", nil)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Println("Server is running on port:", port)
+	err = http.ListenAndServe("0.0.0.0:"+port, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
