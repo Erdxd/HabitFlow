@@ -72,7 +72,7 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 
-	Habits, err := database.CheckHabits(Id_user)
+	Habits, err := database.CheckHabits(db, Id_user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
