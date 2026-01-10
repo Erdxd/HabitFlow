@@ -7,7 +7,7 @@ import (
 	"z/model"
 )
 
-func CheckHabits(Id_user int) ([]model.HabitFlow, error) {
+func CheckHabits(db *sql.DB, Id_user int) ([]model.HabitFlow, error) {
 	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE user_id = $1`, Id_user)
 
 	if err != nil {
