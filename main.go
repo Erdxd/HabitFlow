@@ -23,11 +23,12 @@ var tmpllog = template.Must(template.ParseFiles("templates/login.html"))
 
 func main() {
 	var err error
+	godotenv.Load("Database.env", "bot.env")
+
 	db, err = database.InitDb()
 	if err != nil {
 		log.Fatal(err)
 	}
-	godotenv.Load("bot.env")
 
 	token := os.Getenv("TELEGRAM_BOT_TOKEN")
 	bot1, err := bot.InitBot(token)
