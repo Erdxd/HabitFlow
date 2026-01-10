@@ -38,3 +38,24 @@ func SaveTelegramChatID(db *sql.DB, userID int, chatID int64) error {
 	_, err := db.Exec(Sqlstatement, chatID, userID)
 	return err
 }
+func GetTelegramChatID(db *sql.DB, userID int, chatID int64) (int64, error) {
+	var TgChat int
+	Sqlstatement := (`SELECT telegram_chat_id FROM "users" WHERE id_user = $1`)
+	err := db.QueryRow(Sqlstatement, userID).Scan(&TgChat)
+	if err != nil {
+		return 0, err
+	}
+	return int64(TgChat), nil
+
+}
+func GetUserIdByTgID(db *sql.DB, chatId int64) (int, error) {
+
+	var User_Id int
+	Sqlstatement := (`SELECT id_user FROM "users" WHERE telegram_chat_id = $1`)
+	err := db.QueryRow(Sqlstatement, chatId).Scan(&User_Id)
+	if err != nil {
+		return 0, err
+	}
+	return User_Id, nil
+
+}

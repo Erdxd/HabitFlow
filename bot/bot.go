@@ -3,8 +3,10 @@ package bot
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strconv"
 	"z/account"
+	"z/database"
 	"z/model"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -30,12 +32,13 @@ func SendHabitNotification(bot *tgbotapi.BotAPI, chatId int64, habits []model.Ha
 	for _, habit := range habits {
 		status := "❌"
 		if habit.Status_Today {
-			bot.Send(tgbotapi.NewMessage(chatId, message))
+
 			status = "✅"
 		}
-
 		message += fmt.Sprintf("%s %s (серия: %d)\n", status, habit.Habit_Name, habit.Streak)
+
 	}
+
 	msg := tgbotapi.NewMessage(chatId, message)
 	_, err := bot.Send(msg)
 	return err
@@ -66,7 +69,57 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "✅ Чат успешно привязан! Теперь ты будешь получать уведомления о привычках.")
 				bot.Send(msg)
+			} else if update.Message.Command() == "GetTask" {
+				User_id, err := account.GetUserIdByTgID(db, update.Message.Chat.ID)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Не удалось получить ваш Айди пользователя. привяжите аккаунт по ссылке:")
+					bot.Send(msg)
+				}
+
+				habits, err := database.CheckHabits(User_id)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Не удалось получить ваши привычки:")
+					bot.Send(msg)
+				}
+				if err != nil {
+					log.Printf("Ошибка получения привычек для пользователя %d: %v", update.Message.Chat.ID, err)
+					continue
+				}
+				SendHabitNotification(bot, update.Message.Chat.ID, habits)
+			} else if update.Message.Text == "📋 Мои привычки" {
+				User_id, err := account.GetUserIdByTgID(db, update.Message.Chat.ID)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Не удалось получить ваш Айди пользователя. привяжите аккаунт по ссылке:")
+					bot.Send(msg)
+				}
+
+				habits, err := database.CheckHabits(User_id)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Не удалось получить ваши привычки:")
+					bot.Send(msg)
+				}
+				if err != nil {
+					log.Printf("Ошибка получения привычек для пользователя %d: %v", update.Message.Chat.ID, err)
+					continue
+				}
+				SendHabitNotification(bot, update.Message.Chat.ID, habits)
 			}
 		}
+
 	}
+}
+
+func SendKeyboard(bot *tgbotapi.BotAPI, ChatId int64) error {
+	keyboard := [][]tgbotapi.KeyboardButton{
+		{
+			{Text: "📋 Мои привычки"},
+		},
+	}
+	replyMarkup := tgbotapi.NewReplyKeyboard(keyboard...)
+	replyMarkup.OneTimeKeyboard = false
+	replyMarkup.ResizeKeyboard = true
+	msg := tgbotapi.NewMessage(ChatId, "Выберите действие:")
+	msg.ReplyMarkup = replyMarkup
+	_, err := bot.Send(msg)
+	return err
 }
