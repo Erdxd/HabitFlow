@@ -106,6 +106,59 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 				}
 				SendHabitNotification(bot, update.Message.Chat.ID, habits)
 				SendKeyboard(bot, update.Message.Chat.ID)
+			} else if update.Message.Text == "➕Добавить привычку" {
+				User_id, err := account.GetUserIdByTgID(db, update.Message.Chat.ID)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Не удалось получить ваш Айди пользователя. привяжите аккаунт по ссылке:")
+					bot.Send(msg)
+				}
+				msgAboutId := tgbotapi.NewMessage(update.Message.Chat.ID, "Введите ID для вашей привычки")
+				bot.Send(msgAboutId)
+				UserMessageIdHabit := update.Message.Text
+				IdNewHabit, err := strconv.Atoi(UserMessageIdHabit)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Введите числовое значение")
+					bot.Send(msg)
+					return
+				}
+				msgAboutName := tgbotapi.NewMessage(update.Message.Chat.ID, "Введите название привычки")
+				bot.Send((msgAboutName))
+				UserMessageHabitName := update.Message.Text
+				msgAboutStreak := tgbotapi.NewMessage(update.Message.Chat.ID, "Сколько дней вы этим уже занимаетесь?")
+				bot.Send((msgAboutStreak))
+				UserMessageAboutStreak := update.Message.Text
+				UserNewIntStreak, err := strconv.Atoi(UserMessageAboutStreak)
+				msgAboutStatusDay := tgbotapi.NewMessage(update.Message.Chat.ID, "Выполнили ли вы эту привычку сегодня? (+ или -)")
+				bot.Send(msgAboutStatusDay)
+				UserMessageAboutStatusDay := update.Message.Text
+				if UserMessageAboutStatusDay != "-" && UserMessageAboutStatusDay != "+" {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Введите + или - ")
+					bot.Send(msg)
+					return
+				}
+				if UserMessageAboutStatusDay == "+" {
+					UserBoolMessageStatusDayTrue := true
+					HabitFlowTgTrue := model.HabitFlow{
+						Id:           IdNewHabit,
+						Habit_Name:   UserMessageHabitName,
+						Status_Today: UserBoolMessageStatusDayTrue,
+						Streak:       UserNewIntStreak,
+					}
+					database.AddHabit(db, HabitFlowTgTrue, User_id)
+
+				} else if UserMessageAboutStatusDay == "-" {
+					UserBoolMessageStatusDayFalse := false
+					HabitFlowTgFalse := model.HabitFlow{
+						Id:           IdNewHabit,
+						Habit_Name:   UserMessageHabitName,
+						Status_Today: UserBoolMessageStatusDayFalse,
+						Streak:       UserNewIntStreak,
+					}
+					database.AddHabit(db, HabitFlowTgFalse, User_id)
+
+				}
+				SendKeyboard(bot, update.Message.Chat.ID)
+
 			}
 		}
 
@@ -116,6 +169,7 @@ func SendKeyboard(bot *tgbotapi.BotAPI, ChatId int64) error {
 	keyboard := [][]tgbotapi.KeyboardButton{
 		{
 			{Text: "📋 Мои привычки"},
+			{Text: "➕Добавить привычку"},
 		},
 	}
 	replyMarkup := tgbotapi.NewReplyKeyboard(keyboard...)
