@@ -187,6 +187,11 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		err = database.ChangeStatusToday(db, Id, Id_user)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
 		if err != nil {
@@ -194,7 +199,7 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 		}
 
 		s := gocron.NewScheduler(anadyrLocation)
-		_, err = s.Every(1).Day().At("00:00").Do(func() {
+		_, err = s.Every(1).Day().At("15:56").Do(func() {
 			database.ResetStatus(db, Id, Id_user)
 			database.AddStreak(db, Id, Streak, Id_user)
 		})
