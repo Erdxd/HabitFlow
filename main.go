@@ -203,6 +203,10 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 			database.ResetStatus(db, Id, Id_user)
 			database.AddStreak(db, Id, Streak, Id_user)
 		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		s.StartAsync()
 
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
