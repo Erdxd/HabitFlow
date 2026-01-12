@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e1e2f, #2b2b45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .card {
+            width: 360px;
+            padding: 32px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .field {
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.15);
+            overflow: hidden;
+        }
+
+        .field input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0 14px;
+            color: #fff;
+        }
+
+        .submit-btn {
+            margin-top: 10px;
+            height: 44px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+
+            background: linear-gradient(135deg, #6c63ff, #857dff);
+        }
+    </style>
+</head>
+<body>
+
+    <form action="/update-profile" method="post" class="card">
+        <div class="title">Редактирование</div>
+
+        <label>Новый логин</label>
+        <div class="field">
+            <input type="text" name="login" value="{{.Login}}" required>
+        </div>
+
+        <label>Новый пароль</label>
+        <div class="field">
+            <input type="password" name="password" required>
+        </div>
+
+        <button type="submit" class="submit-btn">
+            Сохранить
+        </button>
+    </form>
+
+</body>
+</html>
