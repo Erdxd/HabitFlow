@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"log"
-	"time"
 	"z/model"
 )
 
@@ -53,23 +52,18 @@ func ChangeStatusToday(db *sql.DB, id int, user_id int) error {
 	}
 	return nil
 }
-func ResetStatus(db *sql.DB, id int, reset chan model.HabitReset, user_id int) {
+func ResetStatus(db *sql.DB, id int, user_id int) error {
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1 AND user_id = $2`)
+	_, err := db.Exec(SqlStatement, id, user_id)
+	if err != nil {
+		return err
+	}
+	return nil
 
-	go func() error {
-		time.Sleep(24 * time.Hour)
-		SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1 AND user_id = $2`)
-		_, err := db.Exec(SqlStatement, id, user_id)
-		if err != nil {
-			return err
-		}
-		reset <- model.HabitReset{Id: id, Error: nil}
-
-		return nil
-	}()
 }
-func AddStreak(db *sql.DB, id int, streak int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET streak = $1 WHERE id = $2`)
-	_, err := db.Exec(SqlStatement, streak+1, id)
+func AddStreak(db *sql.DB, id int, streak int, Id_user int) error {
+	SqlStatement := (`UPDATE "HabitFlow" SET streak = $1 WHERE id = $2 AND user_id = $3`)
+	_, err := db.Exec(SqlStatement, streak+1, id, Id_user)
 	if err != nil {
 		return err
 	}

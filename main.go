@@ -8,11 +8,13 @@ import (
 	"os"
 	"strconv"
 	"text/template"
+	"time"
 	"z/account"
 	"z/bot"
 	"z/database"
 	"z/model"
 
+	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 )
 
@@ -185,20 +187,17 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = database.ChangeStatusToday(db, Id, Id_user)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		go func(Id int, Streak int) {
-			reset := make(chan model.HabitReset)
-			database.ResetStatus(db, Id, reset, Id_user)
-			result := <-reset
-			if result.Error == nil {
-				database.AddStreak(db, Id, Streak)
-			}
 
-		}(Id, Streak)
+		anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
+		if err != nil {
+			log.Fatal("Ошибка загрузки часового пояса Анадыря:", err)
+		}
+
+		s := gocron.NewScheduler(anadyrLocation)
+		_, err = s.Every(1).Day().At("00:00").Do(func() {
+			database.ResetStatus(db, Id, Id_user)
+			database.AddStreak(db, Id, Streak, Id_user)
+		})
 
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
