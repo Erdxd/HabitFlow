@@ -128,6 +128,11 @@ func HandleMessages(bot *tgbotapi.BotAPI, db *sql.DB) {
 				bot.Send((msgAboutStreak))
 				UserMessageAboutStreak := update.Message.Text
 				UserNewIntStreak, err := strconv.Atoi(UserMessageAboutStreak)
+				if err != nil {
+					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Введите числовое значение")
+					bot.Send(msg)
+					return
+				}
 				msgAboutStatusDay := tgbotapi.NewMessage(update.Message.Chat.ID, "Выполнили ли вы эту привычку сегодня? (+ или -)")
 				bot.Send(msgAboutStatusDay)
 				UserMessageAboutStatusDay := update.Message.Text
@@ -169,7 +174,6 @@ func SendKeyboard(bot *tgbotapi.BotAPI, ChatId int64) error {
 	keyboard := [][]tgbotapi.KeyboardButton{
 		{
 			{Text: "📋 Мои привычки"},
-			{Text: "➕Добавить привычку"},
 		},
 	}
 	replyMarkup := tgbotapi.NewReplyKeyboard(keyboard...)
