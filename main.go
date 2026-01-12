@@ -199,7 +199,7 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 		}
 
 		s := gocron.NewScheduler(anadyrLocation)
-		_, err = s.Every(1).Day().At("15:56").Do(func() {
+		_, err = s.Every(1).Day().At("21:03").Do(func() {
 			database.ResetStatus(db, Id, Id_user)
 			database.AddStreak(db, Id, Streak, Id_user)
 		})
