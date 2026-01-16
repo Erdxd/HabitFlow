@@ -44,26 +44,38 @@ func DeleteHabits(db *sql.DB, id int, user_id int) error {
 	return nil
 
 }
-func ChangeStatusToday(db *sql.DB, id int, user_id int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true WHERE id = $1 AND user_id = $2`)
-	_, err := db.Exec(SqlStatement, id, user_id)
+func ChangeStatusToday(db *sql.DB, id int, user_id, streak int) error {
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true, streak = $1 WHERE id = $2 AND user_id = $3`)
+	_, err := db.Exec(SqlStatement, streak+1, id, user_id)
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func ResetStatus(db *sql.DB, id int, user_id int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE id = $1 AND user_id = $2`)
-	_, err := db.Exec(SqlStatement, id, user_id)
+
+func GetStatus(db *sql.DB, user_id, id int) (error, bool) {
+	var Status_Today bool
+	SqlStatement := (`SELECT status_today FROM "HabitFlow WHERE id = $1 AND user_id = $2`)
+	err := db.QueryRow(SqlStatement, id, user_id).Scan(&Status_Today)
 	if err != nil {
-		return err
+		return err, false
 	}
-	return nil
+	return nil, Status_Today
 
 }
-func AddStreak(db *sql.DB, id int, streak int, Id_user int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET streak = $1 WHERE id = $2 AND user_id = $3`)
-	_, err := db.Exec(SqlStatement, streak+1, id, Id_user)
+func GetStreak(db *sql.DB, user_id, id int) (error, int) {
+	var streak int
+	SqlStatement := (`SELECT streak FROM "HabitFlow WHERE id = $1 AND user_id = $2`)
+	err := db.QueryRow(SqlStatement, id, user_id).Scan(&streak)
+	if err != nil {
+		return err, 0
+	}
+	return nil, streak
+
+}
+func ResetAllStatus(db *sql.DB) error {
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE status_today = true`)
+	_, err := db.Exec(SqlStatement)
 	if err != nil {
 		return err
 	}

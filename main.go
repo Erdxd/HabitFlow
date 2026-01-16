@@ -39,6 +39,7 @@ func main() {
 	}
 	go bot.HandleMessages(bot1, db)
 	go bot.Schedule(bot1, db)
+	go ScheduleForReset(db)
 
 	http.HandleFunc("/", Mainpage)
 	http.HandleFunc("/add", AddHabits)
@@ -182,34 +183,30 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
-		Streak, err := strconv.Atoi(r.FormValue("Streak"))
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = database.ChangeStatusToday(db, Id, Id_user)
+		err, streak := database.GetStreak(db, Id_user, Id)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
-		anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
+		err = database.ChangeStatusToday(db, Id, Id_user, streak)
 		if err != nil {
-			log.Fatal("Ошибка загрузки часового пояса Анадыря:", err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
-
-		s := gocron.NewScheduler(anadyrLocation)
-		_, err = s.Every(1).Day().At("21:03").Do(func() {
-			database.ResetStatus(db, Id, Id_user)
-			database.AddStreak(db, Id, Streak, Id_user)
-		})
+		err, status := database.GetStatus(db, Id_user, Id)
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
-		s.StartAsync()
+		if status == true {
+
+		}
 
 	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
@@ -268,4 +265,21 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpllog.Execute(w, nil)
 
+}
+func ScheduleForReset(db *sql.DB) {
+	anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
+	if err != nil {
+		log.Fatal("Ошибка загрузки часового пояса Анадыря:", err)
+	}
+
+	s := gocron.NewScheduler(anadyrLocation)
+	_, err = s.Every(1).Day().At("00:00").Do(func() {
+		database.ResetAllStatus(db)
+
+	})
+	if err != nil {
+		log.Fatal("Ошибка добавления задачи:", err)
+	}
+
+	s.StartAsync()
 }
