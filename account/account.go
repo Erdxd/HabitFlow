@@ -2,6 +2,7 @@ package account
 
 import (
 	"database/sql"
+	"log"
 	"z/model"
 )
 
@@ -58,4 +59,24 @@ func GetUserIdByTgID(db *sql.DB, chatId int64) (int, error) {
 	}
 	return User_Id, nil
 
+}
+func GetNameuser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
+	rows, err := db.Query(`SELECT username,email,password FROM users WHERE id_user = $1`, id_user)
+
+	if err != nil {
+		log.Println("Can't SELECT data by your tables")
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+	var BaseUser []model.UserBaseView
+	for rows.Next() {
+		var U model.UserBaseView
+		err := rows.Scan(&U.Username, &U.Email, &U.Password)
+		if err != nil {
+			return nil, err
+		}
+		BaseUser = append(BaseUser, U)
+	}
+	return BaseUser, nil
 }
