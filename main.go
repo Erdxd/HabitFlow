@@ -283,7 +283,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
-		UserData, err := account.GetNameuser(db, Id_user)
+		UserData, err := account.GetDataUser(db, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
