@@ -23,3 +23,8 @@ type User struct {
 	Password         string `db:"passworduser"`
 	Telegram_chat_id int64  `db:"telegram_chat_id"`
 }
+type UserBaseView struct {
+	Username string `db:"username"`
+	Email    string `db:"email"`
+	Password string `db:"passworduser"`
+}

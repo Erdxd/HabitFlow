@@ -22,6 +22,7 @@ var db *sql.DB
 var tmplmain = template.Must(template.ParseFiles("templates/main.html"))
 var tmplreg = template.Must(template.ParseFiles("templates/register.html"))
 var tmpllog = template.Must(template.ParseFiles("templates/login.html"))
+var tmplrofile = template.Must(template.ParseFiles("templates/profile.html"))
 
 func main() {
 	var err error
@@ -47,6 +48,7 @@ func main() {
 	http.HandleFunc("/change", ResetStatus)
 	http.HandleFunc("/register", RegisterPageHandler)
 	http.HandleFunc("/login", LoginPageHandler)
+	http.HandleFunc("profile", ProfileHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -81,12 +83,9 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := struct {
-		HabitAll   []model.HabitFlow
-		SearchTask []model.HabitFlow
+		HabitAll []model.HabitFlow
 	}{
 		HabitAll: Habits,
-
-		SearchTask: nil,
 	}
 	tmplmain.Execute(w, data)
 }
@@ -207,6 +206,7 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
@@ -266,6 +266,41 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	tmpllog.Execute(w, nil)
 
 }
+func ProfileHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("id_user")
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+	Id_user, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+
+	if Id_user == 0 {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+
+	if r.Method == "GET" {
+		UserData, err := account.GetNameuser(db, Id_user)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		UserDataCheck := struct {
+			DataAll []model.UserBaseView
+			Id_user int
+		}{
+			DataAll: UserData,
+			Id_user: Id_user,
+		}
+
+		tmplrofile.Execute(w, UserDataCheck)
+	}
+
+}
+
 func ScheduleForReset(db *sql.DB) {
 	anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
 	if err != nil {
