@@ -48,7 +48,7 @@ func main() {
 	http.HandleFunc("/change", ResetStatus)
 	http.HandleFunc("/register", RegisterPageHandler)
 	http.HandleFunc("/login", LoginPageHandler)
-	http.HandleFunc("profile", ProfileHandler)
+	http.HandleFunc("/profile", ProfileHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
