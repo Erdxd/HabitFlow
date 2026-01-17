@@ -60,7 +60,7 @@ func GetUserIdByTgID(db *sql.DB, chatId int64) (int, error) {
 	return User_Id, nil
 
 }
-func GetNameuser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
+func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
 	rows, err := db.Query(`SELECT username,email,password FROM users WHERE id_user = $1`, id_user)
 
 	if err != nil {
