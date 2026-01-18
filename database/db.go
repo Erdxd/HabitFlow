@@ -45,7 +45,7 @@ func DeleteHabits(db *sql.DB, id int, user_id int) error {
 
 }
 func ChangeStatusToday(db *sql.DB, id int, user_id, streak int) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true, streak = $1 WHERE id = $2 AND user_id = $3`)
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = true, streak = $1 WHERE id = $2 AND id_user = $3`)
 	_, err := db.Exec(SqlStatement, streak+1, id, user_id)
 	if err != nil {
 		return err
