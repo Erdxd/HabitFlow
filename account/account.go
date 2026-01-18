@@ -77,8 +77,10 @@ func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
 		if err != nil {
 			return nil, err
 		}
-
+		BaseUser = append(BaseUser, U)
+		log.Println("Found user:", U.Username, U.Email)
 	}
+	log.Println("Total users found:", len(BaseUser))
 
 	return BaseUser, nil
 }
