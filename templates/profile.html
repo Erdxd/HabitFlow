@@ -33,7 +33,6 @@
             gap: 32px;
         }
 
-        /* LEFT */
         .left {
             display: flex;
             flex-direction: column;
@@ -61,7 +60,6 @@
             font-size: 13px;
         }
 
-        /* RIGHT */
         .right {
             display: flex;
             flex-direction: column;
@@ -77,14 +75,25 @@
             display: grid;
             grid-template-columns: 140px 1fr;
             gap: 12px;
-            padding: 14px;
+            padding: 16px;
             border-radius: 12px;
             background: rgba(255,255,255,0.12);
             font-size: 14px;
         }
 
-        .data-block span:first-child {
+        .data-block span:nth-child(odd) {
             color: rgba(255,255,255,0.7);
+        }
+
+        .password {
+            cursor: pointer;
+            letter-spacing: 2px;
+            user-select: none;
+            transition: color 0.15s ease;
+        }
+
+        .password:hover {
+            color: #a8a5ff;
         }
 
         .actions {
@@ -100,44 +109,23 @@
             font-size: 15px;
             font-weight: 600;
             color: #fff;
-
             background: linear-gradient(135deg, #6c63ff, #857dff);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-
-        .edit-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(108, 99, 255, 0.35);
-        }
-
-        @media (max-width: 768px) {
-            .profile-card {
-                grid-template-columns: 1fr;
-            }
-
-            .left {
-                border-right: none;
-                border-bottom: 1px solid rgba(255,255,255,0.15);
-                padding-bottom: 24px;
-            }
         }
     </style>
 </head>
 <body>
 
+{{range .DataAll}}
 <div class="profile-card">
 
-    
+    <!-- LEFT -->
     <div class="left">
         <div class="avatar">👤</div>
-
-        <div class="userid">
-            User ID: <b>{{.UserID}}</b>
-        </div>
+        <div class="userid">User ID: <b>{{.Id}}</b></div>
     </div>
     
 
-    
+    <!-- RIGHT -->
     <div class="right">
         <div class="title">Личный кабинет</div>
 
@@ -149,21 +137,39 @@
             <span>{{.Email}}</span>
 
             <span>Пароль</span>
-            <span>••••••••</span>
+            <span
+                class="password"
+                data-password="{{.Password}}"
+                onclick="togglePassword(this)"
+            >
+                ••••••••
+            </span>
         </div>
 
         <div class="actions">
             <form action="/edit" method="get">
-                <button class="edit-btn">
-                    Редактировать данные
-                </button>
+                <button class="edit-btn">Редактировать данные</button>
             </form>
         </div>
     </div>
 
 </div>
+{{end}}
+
+<script>
+function togglePassword(el) {
+    const real = el.dataset.password;
+
+    if (el.textContent.includes("•")) {
+        el.textContent = real;
+    } else {
+        el.textContent = "••••••••";
+    }
+}
+</script>
 
 </body>
 </html>
+
 
 
