@@ -61,7 +61,7 @@ func GetUserIdByTgID(db *sql.DB, chatId int64) (int, error) {
 
 }
 func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
-	rows, err := db.Query(`SELECT username,email,password FROM users WHERE id_user = $1`, id_user)
+	rows, err := db.Query(`SELECT id_user,username,email,password FROM users WHERE id_user = $1`, id_user)
 
 	if err != nil {
 		log.Println("Can't SELECT data by your tables")
@@ -72,7 +72,7 @@ func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
 	var BaseUser []model.UserBaseView
 	for rows.Next() {
 		var U model.UserBaseView
-		err := rows.Scan(&U.Username, &U.Email, &U.Password)
+		err := rows.Scan(&U.Id_user, &U.Username, &U.Email, &U.Password)
 		if err != nil {
 			return nil, err
 		}

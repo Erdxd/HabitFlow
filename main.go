@@ -290,10 +290,8 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		UserDataCheck := struct {
 			DataAll []model.UserBaseView
-			Id_user int
 		}{
 			DataAll: UserData,
-			Id_user: Id_user,
 		}
 
 		tmplrofile.Execute(w, UserDataCheck)

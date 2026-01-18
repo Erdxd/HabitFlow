@@ -114,14 +114,13 @@
     </style>
 </head>
 <body>
-
 {{range .DataAll}}
 <div class="profile-card">
 
     <!-- LEFT -->
     <div class="left">
         <div class="avatar">👤</div>
-        <div class="userid">User ID: <b>{{.Id}}</b></div>
+        <div class="userid">User ID: <b>{{.Id_user}}</b></div>
     </div>
     
 
@@ -131,7 +130,7 @@
 
         <div class="data-block">
             <span>Логин</span>
-            <span>{{.Login}}</span>
+            <span>{{.Username}}</span>
 
             <span>Email</span>
             <span>{{.Email}}</span>
