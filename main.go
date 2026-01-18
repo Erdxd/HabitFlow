@@ -283,17 +283,20 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "GET" {
+		log.Println("ProfileHandler called with Id_user:", Id_user)
 		UserData, err := account.GetDataUser(db, Id_user)
 		if err != nil {
+			log.Println("Error getting user data:", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		log.Println("UserData length:", len(UserData))
 		UserDataCheck := struct {
 			DataAll []model.UserBaseView
 		}{
 			DataAll: UserData,
 		}
-
+		log.Println("Executing template with UserDataCheck")
 		tmplrofile.Execute(w, UserDataCheck)
 	}
 

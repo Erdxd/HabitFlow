@@ -61,6 +61,7 @@ func GetUserIdByTgID(db *sql.DB, chatId int64) (int, error) {
 
 }
 func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
+	log.Println("GetDataUser called with id_user:", id_user)
 	rows, err := db.Query(`SELECT id_user,username,email,password FROM users WHERE id_user = $1`, id_user)
 
 	if err != nil {
@@ -77,6 +78,8 @@ func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
 			return nil, err
 		}
 		BaseUser = append(BaseUser, U)
+		log.Println("Found user:", U.Username, U.Email)
 	}
+	log.Println("Total users found:", len(BaseUser))
 	return BaseUser, nil
 }
