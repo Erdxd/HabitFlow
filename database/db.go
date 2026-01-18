@@ -7,7 +7,7 @@ import (
 )
 
 func CheckHabits(db *sql.DB, Id_user int) ([]model.HabitFlow, error) {
-	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE user_id = $1`, Id_user)
+	rows, err := db.Query(`SELECT id, habit_name, status_today, streak FROM "HabitFlow" WHERE id_user = $1`, Id_user)
 
 	if err != nil {
 		log.Println("Can't SELECT data by your tables")
@@ -36,7 +36,7 @@ func AddHabit(db *sql.DB, Habits model.HabitFlow, Id_user int) error {
 	return nil
 }
 func DeleteHabits(db *sql.DB, id int, user_id int) error {
-	SqlStatement := (`DELETE FROM "HabitFlow" WHERE id = $1 AND user_id = $2 `)
+	SqlStatement := (`DELETE FROM "HabitFlow" WHERE id = $1 AND id_user = $2 `)
 	_, err := db.Exec(SqlStatement, id, user_id)
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func ChangeStatusToday(db *sql.DB, id int, user_id, streak int) error {
 
 func GetStatus(db *sql.DB, user_id, id int) (error, bool) {
 	var Status_Today bool
-	SqlStatement := (`SELECT status_today FROM "HabitFlow" WHERE id = $1 AND user_id = $2`)
+	SqlStatement := (`SELECT status_today FROM "HabitFlow" WHERE id = $1 AND id_user = $2`)
 	err := db.QueryRow(SqlStatement, id, user_id).Scan(&Status_Today)
 	if err != nil {
 		return err, false
@@ -65,7 +65,7 @@ func GetStatus(db *sql.DB, user_id, id int) (error, bool) {
 }
 func GetStreak(db *sql.DB, user_id, id int) (error, int) {
 	var streak int
-	SqlStatement := (`SELECT streak FROM "HabitFlow WHERE id = $1 AND user_id = $2`)
+	SqlStatement := (`SELECT streak FROM "HabitFlow" WHERE id = $1 AND id_user = $2`)
 	err := db.QueryRow(SqlStatement, id, user_id).Scan(&streak)
 	if err != nil {
 		return err, 0
