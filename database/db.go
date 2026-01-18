@@ -55,7 +55,7 @@ func ChangeStatusToday(db *sql.DB, id int, user_id, streak int) error {
 
 func GetStatus(db *sql.DB, user_id, id int) (error, bool) {
 	var Status_Today bool
-	SqlStatement := (`SELECT status_today FROM "HabitFlow WHERE id = $1 AND user_id = $2`)
+	SqlStatement := (`SELECT status_today FROM "HabitFlow" WHERE id = $1 AND user_id = $2`)
 	err := db.QueryRow(SqlStatement, id, user_id).Scan(&Status_Today)
 	if err != nil {
 		return err, false
