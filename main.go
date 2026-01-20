@@ -211,6 +211,7 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method == "POST" {
 		NameUser := r.FormValue("username")
 		Email := r.FormValue("email")
@@ -238,6 +239,7 @@ func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 	tmplreg.Execute(w, nil)
 }
 func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method == "POST" {
 		Login := r.FormValue("login")
 		Password := r.FormValue("password")
@@ -321,9 +323,9 @@ func RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
-		username := r.FormValue("new_login")
+		newusername := r.FormValue("new_login")
 		password := r.FormValue("password")
-		passwordfromdb, err := account.GetPassword(db, username)
+		passwordfromdb, err := account.GetPasswordwithId(db, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -332,7 +334,7 @@ func RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Неверный пароль", http.StatusInternalServerError)
 			return
 		} else {
-			err := account.RedactLogin(db, Id_user, username)
+			err := account.RedactLogin(db, Id_user, newusername)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
