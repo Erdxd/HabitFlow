@@ -3,6 +3,7 @@ services:
   - type: web
     name: habitflow
     env: go
+    numInstances: 1
     buildCommand: go build -o habitflow
     startCommand: ./habitflow
     envVars:
