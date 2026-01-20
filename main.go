@@ -340,9 +340,8 @@ func RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/profile", http.StatusSeeOther)
 		}
 
-		tmplredact.Execute(w, nil)
 	}
-
+	tmplredact.Execute(w, nil)
 }
 
 func ScheduleForReset(db *sql.DB) {
