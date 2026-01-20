@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактирование</title>
+    <title>Редактирование логина</title>
 
     <style>
         * {
@@ -22,47 +22,55 @@
             color: #fff;
         }
 
-        .card {
-            width: 360px;
+        .edit-card {
+            width: 420px;
             padding: 32px;
-            border-radius: 16px;
+            border-radius: 18px;
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(12px);
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 20px;
         }
 
         .title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             text-align: center;
         }
 
-        label {
-            font-size: 13px;
-            color: rgba(255,255,255,0.8);
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .field {
-            height: 44px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.15);
-            overflow: hidden;
+        .field label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.7);
         }
 
         .field input {
-            width: 100%;
-            height: 100%;
-            background: transparent;
+            height: 44px;
+            padding: 0 14px;
+            border-radius: 10px;
             border: none;
             outline: none;
-            padding: 0 14px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.15);
             color: #fff;
         }
 
-        .submit-btn {
-            margin-top: 10px;
+        .field input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .actions {
+            margin-top: 8px;
+        }
+
+        .save-btn {
+            width: 100%;
             height: 44px;
             border-radius: 10px;
             border: none;
@@ -70,30 +78,60 @@
             font-size: 15px;
             font-weight: 600;
             color: #fff;
-
             background: linear-gradient(135deg, #6c63ff, #857dff);
+        }
+
+        .back {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+        }
+
+        .back:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <form action="/update-profile" method="post" class="card">
-        <div class="title">Редактирование</div>
+<div class="edit-card">
 
-        <label>Новый логин</label>
+    <div class="title">Редактировать логин</div>
+
+    <form action="/edit" method="post">
+
         <div class="field">
-            <input type="text" name="login" value="{{.Login}}" required>
+            <label>Новый логин</label>
+            <input
+                type="text"
+                name="new_login"
+                placeholder="Введите новый логин"
+                required
+            >
         </div>
 
-        <label>Новый пароль</label>
         <div class="field">
-            <input type="password" name="password" required>
+            <label>Подтвердите пароль</label>
+            <input
+                type="password"
+                name="password"
+                placeholder="Введите пароль"
+                required
+            >
         </div>
 
-        <button type="submit" class="submit-btn">
-            Сохранить
-        </button>
+        <div class="actions">
+            <button class="save-btn">Сохранить</button>
+        </div>
+
     </form>
+
+    <div class="back" onclick="history.back()">
+        ← Назад в профиль
+    </div>
+
+</div>
 
 </body>
 </html>
