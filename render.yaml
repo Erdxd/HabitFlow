@@ -3,10 +3,9 @@ services:
   - type: web
     name: habitflow
     env: go
+    numInstances: 1
     buildCommand: go build -o habitflow
     startCommand: ./habitflow
     envVars:
       - key: PORT
         value: 8080
-      - key: TELEGRAM_BOT_TOKEN
-        sync: false
