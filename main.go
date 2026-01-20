@@ -23,6 +23,7 @@ var tmplmain = template.Must(template.ParseFiles("templates/main.html"))
 var tmplreg = template.Must(template.ParseFiles("templates/register.html"))
 var tmpllog = template.Must(template.ParseFiles("templates/login.html"))
 var tmplrofile = template.Must(template.ParseFiles("templates/profile.html"))
+var tmplredact = template.Must(template.ParseFiles("templates/redact.html"))
 
 func main() {
 	var err error
@@ -49,6 +50,7 @@ func main() {
 	http.HandleFunc("/register", RegisterPageHandler)
 	http.HandleFunc("/login", LoginPageHandler)
 	http.HandleFunc("/profile", ProfileHandler)
+	http.HandleFunc("/redact", RedactLoginHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -239,7 +241,7 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		Login := r.FormValue("login")
 		Password := r.FormValue("password")
-		passwordfromdb, err := account.Login(db, Login)
+		passwordfromdb, err := account.GetPassword(db, Login)
 		if err != nil {
 			http.Error(w, "Пользователя не существует", http.StatusInternalServerError)
 			return
@@ -298,6 +300,45 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Println("Executing template with UserDataCheck")
 		tmplrofile.Execute(w, UserDataCheck)
+	}
+
+}
+func RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("id_user")
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+	Id_user, err := strconv.Atoi(cookie.Value)
+	if err != nil {
+		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
+		return
+	}
+
+	if Id_user == 0 {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+
+	if r.Method == "POST" {
+
+		username := r.FormValue("new_login")
+		password := r.FormValue("password")
+		passwordfromdb, err := account.GetPassword(db, username)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if password != passwordfromdb {
+			http.Error(w, "Неверный пароль", http.StatusInternalServerError)
+			return
+		} else {
+			err := account.RedactLogin(db, Id_user, username)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
 	}
 
 }

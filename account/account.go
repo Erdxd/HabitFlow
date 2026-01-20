@@ -15,7 +15,7 @@ func Register(db *sql.DB, Users model.User) error {
 	return nil
 
 }
-func Login(db *sql.DB, Username string) (string, error) {
+func GetPassword(db *sql.DB, Username string) (string, error) {
 	var Password string
 	Sqlstatement := (`SELECT password FROM "users" WHERE username =$1`)
 	err := db.QueryRow(Sqlstatement, Username).Scan(&Password)
@@ -82,4 +82,13 @@ func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
 	}
 
 	return BaseUser, nil
+}
+func RedactLogin(db *sql.DB, user_id int, username string) error {
+	SqlStatement := (`UPDATE "users" SET username = $1 WHERE user_id = $2`)
+	_, err := db.Exec(SqlStatement, username, user_id)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
