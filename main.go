@@ -12,6 +12,7 @@ import (
 	"z/account"
 	"z/bot"
 	"z/database"
+	"z/encrypto"
 	"z/model"
 
 	"github.com/go-co-op/gocron"
@@ -245,14 +246,13 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 		Password := r.FormValue("password")
 		passwordfromdb, err := account.GetPassword(db, Login)
 		if err != nil {
-			http.Error(w, "Пользователя не существует", http.StatusInternalServerError)
+			http.Error(w, "Неверный логин или пароль", http.StatusInternalServerError)
 			return
 		}
-		if passwordfromdb != Password {
-			http.Error(w, "Неверный пароль", http.StatusInternalServerError)
-			return
-		} else if passwordfromdb == Password {
+		Coincidence := encrypto.CHeckPassword(passwordfromdb, Password)
+		if Coincidence {
 			Id_user, err := account.GetUserId(db, Login)
+
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
@@ -263,10 +263,13 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 				Path:  "/",
 			})
 			http.Redirect(w, r, "/", http.StatusSeeOther)
-
+		} else {
+			http.Error(w, "Неверный логин или пароль", http.StatusInternalServerError)
+			return
 		}
 
 	}
+
 	tmpllog.Execute(w, nil)
 
 }

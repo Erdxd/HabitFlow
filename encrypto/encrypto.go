@@ -14,3 +14,8 @@ func Encrypto(password string) (string, error) {
 	return string(HasgedPassword), nil
 
 }
+func CHeckPassword(HashedPassword, Password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(HashedPassword), []byte(Password))
+	return err == nil
+
+}
