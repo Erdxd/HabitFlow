@@ -328,22 +328,26 @@ func RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		newusername := r.FormValue("new_login")
 		password := r.FormValue("password")
+
 		passwordfromdb, err := account.GetPasswordwithId(db, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if password != passwordfromdb {
-			http.Error(w, "Неверный пароль", http.StatusInternalServerError)
-			return
-		} else {
+		Coincidence := encrypto.CHeckPassword(passwordfromdb, password)
+		if Coincidence {
 			err := account.RedactLogin(db, Id_user, newusername)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Error(w, "Cant change your login", http.StatusBadRequest)
 				return
 			}
-			http.Redirect(w, r, "/profile", http.StatusSeeOther)
+
+		} else {
+			http.Error(w, "wrong password", http.StatusBadRequest)
+			return
 		}
+
+		http.Redirect(w, r, "/profile", http.StatusSeeOther)
 
 	}
 	tmplredact.Execute(w, nil)
