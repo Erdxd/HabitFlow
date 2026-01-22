@@ -34,7 +34,7 @@ Telegram-bot:   TELEGRAM_BOT_TOKEN
 Porject will be updated with more function and more intersting design 
 Current plans: Create ability to edit your password
 ## Author 
-Create by 15 y.o. web-developer from Chukotka
+Create by @erdxd, web-developer from Chukotka
 
 
 

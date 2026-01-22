@@ -12,7 +12,7 @@ import (
 	"z/account"
 	"z/bot"
 	"z/database"
-	"z/encrypto"
+	encrypto "z/hashing"
 	"z/model"
 
 	"github.com/go-co-op/gocron"

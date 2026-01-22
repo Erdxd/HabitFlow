@@ -3,7 +3,7 @@ package account
 import (
 	"database/sql"
 	"log"
-	"z/encrypto"
+	encrypto "z/hashing"
 	"z/model"
 )
 
