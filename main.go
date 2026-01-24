@@ -35,7 +35,7 @@ func main() {
 	}
 	go bottg.HandleMessages(bot1, db)
 	go s.Schedule(bot1)
-	go scheduler.ScheduleForReset(db)
+	go s.ScheduleForReset()
 	h := &handlers.Handlers{
 		DB: db,
 	}
