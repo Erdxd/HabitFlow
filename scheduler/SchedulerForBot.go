@@ -29,7 +29,7 @@ func (sh *Scheduler) Schedule(bot *tgbotapi.BotAPI) {
 }
 
 func (s *Scheduler) sendDailyNotifications(bot *tgbotapi.BotAPI) {
-	rows, err := db.Query(`SELECT id_user, telegram_chat_id FROM "users" WHERE telegram_chat_id IS NOT NULL`)
+	rows, err := s.DB.Query(`SELECT id_user, telegram_chat_id FROM "users" WHERE telegram_chat_id IS NOT NULL`)
 	if err != nil {
 		log.Printf("Ошибка получения пользователей: %v", err)
 		return

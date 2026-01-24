@@ -1,7 +1,6 @@
 package scheduler
 
 import (
-	"database/sql"
 	"log"
 	"time"
 	"z/database"
@@ -9,15 +8,15 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
-func ScheduleForReset(db *sql.DB) {
+func (sh *Scheduler) ScheduleForReset() {
 	anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
 	if err != nil {
 		log.Fatal("Ошибка загрузки часового пояса Анадыря:", err)
 	}
 
 	s := gocron.NewScheduler(anadyrLocation)
-	_, err = s.Every(1).Day().At("12:46").Do(func() {
-		database.ResetAllStatus(db)
+	_, err = s.Every(1).Day().At("16:45").Do(func() {
+		database.ResetAllStatus(sh.DB)
 
 	})
 	if err != nil {
