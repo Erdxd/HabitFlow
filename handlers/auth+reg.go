@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"z/account"
@@ -27,6 +28,7 @@ func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			err := account.Register(db, User)
 			if err != nil {
+				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -43,6 +45,7 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 		Password := r.FormValue("password")
 		passwordfromdb, err := account.GetPassword(db, Login)
 		if err != nil {
+			log.Println(err)
 			http.Error(w, "Неверный логин или пароль", http.StatusInternalServerError)
 			return
 		}
@@ -51,6 +54,7 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 			Id_user, err := account.GetUserId(db, Login)
 
 			if err != nil {
+				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"z/database"
@@ -10,8 +11,10 @@ import (
 func Mainpage(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
 		return
+
 	}
 	Id_user, err := strconv.Atoi(cookie.Value)
 	if err != nil {
@@ -25,6 +28,7 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 
 	Habits, err := database.CheckHabits(db, Id_user)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
