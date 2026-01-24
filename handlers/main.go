@@ -8,7 +8,7 @@ import (
 	"z/model"
 )
 
-func Mainpage(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) Mainpage(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
 		log.Println(err)
@@ -26,7 +26,7 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 
-	Habits, err := database.CheckHabits(db, Id_user)
+	Habits, err := database.CheckHabits(h.DB, Id_user)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -39,7 +39,7 @@ func Mainpage(w http.ResponseWriter, r *http.Request) {
 	}
 	tmplmain.Execute(w, data)
 }
-func AddHabits(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) AddHabits(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -74,7 +74,7 @@ func AddHabits(w http.ResponseWriter, r *http.Request) {
 			Status_Today: Status_Today,
 			Streak:       Streak,
 		}
-		err = database.AddHabit(db, Habit, Id_user)
+		err = database.AddHabit(h.DB, Habit, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -83,7 +83,7 @@ func AddHabits(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-func DeleteHabits(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) DeleteHabits(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -105,7 +105,7 @@ func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = database.DeleteHabits(db, Id, Id_user)
+		err = database.DeleteHabits(h.DB, Id, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -114,7 +114,7 @@ func DeleteHabits(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func ResetStatus(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) ResetStatus(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
 		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
@@ -136,17 +136,17 @@ func ResetStatus(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err, streak := database.GetStreak(db, Id_user, Id)
+		err, streak := database.GetStreak(h.DB, Id_user, Id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = database.ChangeStatusToday(db, Id, Id_user, streak)
+		err = database.ChangeStatusToday(h.DB, Id, Id_user, streak)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err, status := database.GetStatus(db, Id_user, Id)
+		err, status := database.GetStatus(h.DB, Id_user, Id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return

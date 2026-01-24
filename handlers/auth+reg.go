@@ -9,7 +9,7 @@ import (
 	"z/model"
 )
 
-func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		NameUser := r.FormValue("username")
@@ -26,7 +26,7 @@ func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 				Email:    Email,
 				Password: Password,
 			}
-			err := account.Register(db, User)
+			err := account.Register(h.DB, User)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -38,12 +38,12 @@ func RegisterPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmplreg.Execute(w, nil)
 }
-func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		Login := r.FormValue("login")
 		Password := r.FormValue("password")
-		passwordfromdb, err := account.GetPassword(db, Login)
+		passwordfromdb, err := account.GetPassword(h.DB, Login)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, "Неверный логин или пароль", http.StatusInternalServerError)
@@ -51,7 +51,7 @@ func LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		Coincidence := encrypto.CHeckPassword(passwordfromdb, Password)
 		if Coincidence {
-			Id_user, err := account.GetUserId(db, Login)
+			Id_user, err := account.GetUserId(h.DB, Login)
 
 			if err != nil {
 				log.Println(err)

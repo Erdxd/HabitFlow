@@ -9,7 +9,7 @@ import (
 	"z/model"
 )
 
-func ProfileHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
 		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
@@ -27,7 +27,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
 		log.Println("ProfileHandler called with Id_user:", Id_user)
-		UserData, err := account.GetDataUser(db, Id_user)
+		UserData, err := account.GetDataUser(h.DB, Id_user)
 		if err != nil {
 			log.Println("Error getting user data:", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -44,7 +44,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-func RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("id_user")
 	if err != nil {
 		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
@@ -65,14 +65,14 @@ func RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 		newusername := r.FormValue("new_login")
 		password := r.FormValue("password")
 
-		passwordfromdb, err := account.GetPasswordwithId(db, Id_user)
+		passwordfromdb, err := account.GetPasswordwithId(h.DB, Id_user)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		Coincidence := encrypto.CHeckPassword(passwordfromdb, password)
 		if Coincidence {
-			err := account.RedactLogin(db, Id_user, newusername)
+			err := account.RedactLogin(h.DB, Id_user, newusername)
 			if err != nil {
 				http.Error(w, "Cant change your login", http.StatusBadRequest)
 				return

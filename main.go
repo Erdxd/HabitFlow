@@ -33,15 +33,18 @@ func main() {
 	go bottg.HandleMessages(bot1, db)
 	go scheduler.Schedule(bot1, db)
 	go scheduler.ScheduleForReset(db)
+	h := &handlers.Handlers{
+		DB: db,
+	}
 
-	http.HandleFunc("/", handlers.Mainpage)
-	http.HandleFunc("/add", handlers.AddHabits)
-	http.HandleFunc("/delete", handlers.DeleteHabits)
-	http.HandleFunc("/change", handlers.ResetStatus)
-	http.HandleFunc("/register", handlers.RegisterPageHandler)
-	http.HandleFunc("/login", handlers.LoginPageHandler)
-	http.HandleFunc("/profile", handlers.ProfileHandler)
-	http.HandleFunc("/redact", handlers.RedactLoginHandler)
+	http.HandleFunc("/", h.Mainpage)
+	http.HandleFunc("/add", h.AddHabits)
+	http.HandleFunc("/delete", h.DeleteHabits)
+	http.HandleFunc("/change", h.ResetStatus)
+	http.HandleFunc("/register", h.RegisterPageHandler)
+	http.HandleFunc("/login", h.LoginPageHandler)
+	http.HandleFunc("/profile", h.ProfileHandler)
+	http.HandleFunc("/redact", h.RedactLoginHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
