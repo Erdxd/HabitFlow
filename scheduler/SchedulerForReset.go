@@ -24,4 +24,5 @@ func (sh *Scheduler) ScheduleForReset() {
 	}
 
 	s.StartAsync()
+
 }
