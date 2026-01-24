@@ -17,6 +17,9 @@ import (
 var db *sql.DB
 
 func main() {
+	s := &scheduler.Scheduler{
+		DB: db,
+	}
 	var err error
 	godotenv.Load("Database.env", "bot.env")
 
@@ -31,7 +34,7 @@ func main() {
 		log.Fatal(err)
 	}
 	go bottg.HandleMessages(bot1, db)
-	go scheduler.Schedule(bot1, db)
+	go s.Schedule(bot1)
 	go scheduler.ScheduleForReset(db)
 	h := &handlers.Handlers{
 		DB: db,

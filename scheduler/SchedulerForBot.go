@@ -1,7 +1,6 @@
 package scheduler
 
 import (
-	"database/sql"
 	"log"
 	"time"
 	bottg "z/BotTg"
@@ -12,7 +11,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func Schedule(bot *tgbotapi.BotAPI, db *sql.DB) {
+func (sh *Scheduler) Schedule(bot *tgbotapi.BotAPI) {
 	anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
 	if err != nil {
 		log.Fatal("Ошибка загрузки часового пояса Анадыря:", err)
@@ -20,7 +19,7 @@ func Schedule(bot *tgbotapi.BotAPI, db *sql.DB) {
 
 	s := gocron.NewScheduler(anadyrLocation)
 	_, err = s.Every(1).Day().At("07:00").Do(func() {
-		sendDailyNotifications(bot, db)
+		sh.sendDailyNotifications(bot)
 	})
 	if err != nil {
 		log.Fatal("Ошибка добавления задачи:", err)
@@ -29,7 +28,7 @@ func Schedule(bot *tgbotapi.BotAPI, db *sql.DB) {
 	s.StartAsync()
 }
 
-func sendDailyNotifications(bot *tgbotapi.BotAPI, db *sql.DB) {
+func (s *Scheduler) sendDailyNotifications(bot *tgbotapi.BotAPI) {
 	rows, err := db.Query(`SELECT id_user, telegram_chat_id FROM "users" WHERE telegram_chat_id IS NOT NULL`)
 	if err != nil {
 		log.Printf("Ошибка получения пользователей: %v", err)
@@ -45,7 +44,7 @@ func sendDailyNotifications(bot *tgbotapi.BotAPI, db *sql.DB) {
 			continue
 		}
 
-		habits, err := database.CheckHabits(db, user.Id_user)
+		habits, err := database.CheckHabits(s.DB, user.Id_user)
 		if err != nil {
 			log.Printf("Ошибка получения привычек для пользователя %d: %v", user.Id_user, err)
 			continue
