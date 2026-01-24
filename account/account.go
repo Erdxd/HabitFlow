@@ -3,19 +3,21 @@ package account
 import (
 	"database/sql"
 	"log"
+	encrypto "z/hashing"
 	"z/model"
 )
 
 func Register(db *sql.DB, Users model.User) error {
 	Sqlstatement := (`INSERT INTO "users" (username,email,password) VALUES ($1, $2, $3)`)
-	_, err := db.Exec(Sqlstatement, Users.Username, Users.Email, Users.Password)
+	HashedPassword, err := encrypto.Encrypto(Users.Password)
+	_, err = db.Exec(Sqlstatement, Users.Username, Users.Email, HashedPassword)
 	if err != nil {
 		return err
 	}
 	return nil
 
 }
-func Login(db *sql.DB, Username string) (string, error) {
+func GetPassword(db *sql.DB, Username string) (string, error) {
 	var Password string
 	Sqlstatement := (`SELECT password FROM "users" WHERE username =$1`)
 	err := db.QueryRow(Sqlstatement, Username).Scan(&Password)
@@ -82,4 +84,24 @@ func GetDataUser(db *sql.DB, id_user int) ([]model.UserBaseView, error) {
 	}
 
 	return BaseUser, nil
+}
+func RedactLogin(db *sql.DB, user_id int, username string) error {
+	SqlStatement := (`UPDATE "users" SET username = $1 WHERE id_user = $2`)
+	_, err := db.Exec(SqlStatement, username, user_id)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+func GetPasswordwithId(db *sql.DB, Id_user int) (string, error) {
+	var Password string
+	Sqlstatement := (`SELECT password FROM "users" WHERE id_user =$1`)
+	err := db.QueryRow(Sqlstatement, Id_user).Scan(&Password)
+	if err != nil {
+		return "", err
+	}
+
+	return Password, nil
+
 }

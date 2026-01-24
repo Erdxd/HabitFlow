@@ -161,19 +161,11 @@
 
             <span>Email</span>
             <span>{{.Email}}</span>
-
-            <span>Пароль</span>
-            <span
-                class="password"
-                data-password="{{.Password}}"
-                onclick="togglePassword(this)"
-            >
-                ••••••••
-            </span>
+            
         </div>
 
         <div class="actions">
-            <form action="/edit" method="get">
+            <form action="/redact" method="get">
                 <button class="edit-btn">Редактировать данные</button>
             </form>
 
@@ -186,12 +178,6 @@
 </div>
 {{end}}
 
-<script>
-function togglePassword(el) {
-    const real = el.dataset.password;
-    el.textContent = el.textContent.includes("•") ? real : "••••••••";
-}
-</script>
 
 </body>
 </html>

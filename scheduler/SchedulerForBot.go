@@ -1,9 +1,9 @@
-package bot
+package scheduler
 
 import (
-	"database/sql"
 	"log"
 	"time"
+	bottg "z/BotTg"
 	"z/database"
 	"z/model"
 
@@ -11,7 +11,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func Schedule(bot *tgbotapi.BotAPI, db *sql.DB) {
+func (sh *Scheduler) Schedule(bot *tgbotapi.BotAPI) {
 	anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
 	if err != nil {
 		log.Fatal("Ошибка загрузки часового пояса Анадыря:", err)
@@ -19,7 +19,7 @@ func Schedule(bot *tgbotapi.BotAPI, db *sql.DB) {
 
 	s := gocron.NewScheduler(anadyrLocation)
 	_, err = s.Every(1).Day().At("07:00").Do(func() {
-		sendDailyNotifications(bot, db)
+		sh.sendDailyNotifications(bot)
 	})
 	if err != nil {
 		log.Fatal("Ошибка добавления задачи:", err)
@@ -28,8 +28,8 @@ func Schedule(bot *tgbotapi.BotAPI, db *sql.DB) {
 	s.StartAsync()
 }
 
-func sendDailyNotifications(bot *tgbotapi.BotAPI, db *sql.DB) {
-	rows, err := db.Query(`SELECT id_user, telegram_chat_id FROM "users" WHERE telegram_chat_id IS NOT NULL`)
+func (s *Scheduler) sendDailyNotifications(bot *tgbotapi.BotAPI) {
+	rows, err := s.DB.Query(`SELECT id_user, telegram_chat_id FROM "users" WHERE telegram_chat_id IS NOT NULL`)
 	if err != nil {
 		log.Printf("Ошибка получения пользователей: %v", err)
 		return
@@ -44,17 +44,17 @@ func sendDailyNotifications(bot *tgbotapi.BotAPI, db *sql.DB) {
 			continue
 		}
 
-		habits, err := database.CheckHabits(db, user.Id_user)
+		habits, err := database.CheckHabits(s.DB, user.Id_user)
 		if err != nil {
 			log.Printf("Ошибка получения привычек для пользователя %d: %v", user.Id_user, err)
 			continue
 		}
 
-		if err := SendHabitNotification(bot, user.Telegram_chat_id, habits); err != nil {
+		if err := bottg.SendHabitNotification(bot, user.Telegram_chat_id, habits); err != nil {
 			log.Printf("Ошибка отправки уведомления пользователю %d: %v", user.Id_user, err)
 		} else {
 			log.Printf("Успешно отправлено уведомление пользователю %d", user.Id_user)
-			SendKeyboard(bot, user.Telegram_chat_id)
+			bottg.SendKeyboard(bot, user.Telegram_chat_id)
 		}
 	}
 }
