@@ -1,4 +1,4 @@
-package bot
+package bottg
 
 import (
 	"database/sql"

@@ -1,9 +1,10 @@
-package bot
+package scheduler
 
 import (
 	"database/sql"
 	"log"
 	"time"
+	bottg "z/BotTg"
 	"z/database"
 	"z/model"
 
@@ -50,11 +51,11 @@ func sendDailyNotifications(bot *tgbotapi.BotAPI, db *sql.DB) {
 			continue
 		}
 
-		if err := SendHabitNotification(bot, user.Telegram_chat_id, habits); err != nil {
+		if err := bottg.SendHabitNotification(bot, user.Telegram_chat_id, habits); err != nil {
 			log.Printf("Ошибка отправки уведомления пользователю %d: %v", user.Id_user, err)
 		} else {
 			log.Printf("Успешно отправлено уведомление пользователю %d", user.Id_user)
-			SendKeyboard(bot, user.Telegram_chat_id)
+			bottg.SendKeyboard(bot, user.Telegram_chat_id)
 		}
 	}
 }

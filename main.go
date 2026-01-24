@@ -6,13 +6,11 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"time"
-	"z/bot"
+	bottg "z/BotTg"
 	"z/database"
 	"z/handlers"
+	"z/scheduler"
 
-	"github.com/go-co-op/gocron"
 	"github.com/joho/godotenv"
 )
 
@@ -28,13 +26,13 @@ func main() {
 	}
 
 	token := os.Getenv("TELEGRAM_BOT_TOKEN")
-	bot1, err := bot.InitBot(token)
+	bot1, err := bottg.InitBot(token)
 	if err != nil {
 		log.Fatal(err)
 	}
-	go bot.HandleMessages(bot1, db)
-	go bot.Schedule(bot1, db)
-	go ScheduleForReset(db)
+	go bottg.HandleMessages(bot1, db)
+	go scheduler.Schedule(bot1, db)
+	go scheduler.ScheduleForReset(db)
 
 	http.HandleFunc("/", handlers.Mainpage)
 	http.HandleFunc("/add", handlers.AddHabits)
@@ -55,22 +53,4 @@ func main() {
 		log.Fatal(err)
 	}
 
-}
-
-func ScheduleForReset(db *sql.DB) {
-	anadyrLocation, err := time.LoadLocation("Asia/Anadyr")
-	if err != nil {
-		log.Fatal("Ошибка загрузки часового пояса Анадыря:", err)
-	}
-
-	s := gocron.NewScheduler(anadyrLocation)
-	_, err = s.Every(1).Day().At("12:46").Do(func() {
-		database.ResetAllStatus(db)
-
-	})
-	if err != nil {
-		log.Fatal("Ошибка добавления задачи:", err)
-	}
-
-	s.StartAsync()
 }
