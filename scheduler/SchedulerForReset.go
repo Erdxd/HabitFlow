@@ -15,7 +15,7 @@ func (sh *Scheduler) ScheduleForReset() {
 	}
 
 	s := gocron.NewScheduler(anadyrLocation)
-	_, err = s.Every(1).Day().At("16:57").Do(func() {
+	_, err = s.Every(1).Day().At("17:05").Do(func() {
 		database.ResetAllStatus(sh.DB)
 
 	})

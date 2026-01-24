@@ -17,15 +17,16 @@ import (
 var db *sql.DB
 
 func main() {
-	s := &scheduler.Scheduler{
-		DB: db,
-	}
+
 	var err error
 	godotenv.Load("Database.env", "bot.env")
 
 	db, err = database.InitDb()
 	if err != nil {
 		log.Fatal(err)
+	}
+	s := &scheduler.Scheduler{
+		DB: db,
 	}
 
 	token := os.Getenv("TELEGRAM_BOT_TOKEN")
