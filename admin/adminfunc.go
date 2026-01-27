@@ -31,7 +31,7 @@ func GetDataAboutAllUsers(db *sql.DB) ([]model.User, error) {
 }
 func GetAdmin(db *sql.DB, id_user int) (bool, error) {
 	var Admin bool
-	SqlSatement := (`SELECT Admin from users WHERE user_id = $1`)
+	SqlSatement := (`SELECT admin from users WHERE id_user = $1`)
 	err := db.QueryRow(SqlSatement, id_user).Scan(&Admin)
 	if err != nil {
 		return false, err

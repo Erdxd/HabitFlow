@@ -34,4 +34,5 @@ func ValidateToken(tokenstr string) (*model.Claims, error) {
 		return nil, err
 	}
 	return claims, nil
+
 }

@@ -9,23 +9,10 @@ import (
 )
 
 func (h *Handlers) Mainpage(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("id_user")
+	Id_user, err := h.Cookie_userID(w, r)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
-		return
-
-	}
-	Id_user, err := strconv.Atoi(cookie.Value)
-	if err != nil {
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
-		return
-	}
-
-	if Id_user == 0 {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
-
 	Habits, err := database.CheckHabits(h.DB, Id_user)
 	if err != nil {
 		log.Println(err)
@@ -40,21 +27,10 @@ func (h *Handlers) Mainpage(w http.ResponseWriter, r *http.Request) {
 	tmplmain.Execute(w, data)
 }
 func (h *Handlers) AddHabits(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("id_user")
+	Id_user, err := h.Cookie_userID(w, r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	Id_user, err := strconv.Atoi(cookie.Value)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if Id_user == 0 {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
-
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
 		if err != nil {
@@ -84,21 +60,10 @@ func (h *Handlers) AddHabits(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 func (h *Handlers) DeleteHabits(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("id_user")
+	Id_user, err := h.Cookie_userID(w, r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	Id_user, err := strconv.Atoi(cookie.Value)
-	if err != nil {
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
-		return
-	}
-
-	if Id_user == 0 {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
-
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
 		if err != nil {
@@ -115,21 +80,10 @@ func (h *Handlers) DeleteHabits(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handlers) ResetStatus(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("id_user")
+	Id_user, err := h.Cookie_userID(w, r)
 	if err != nil {
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
-		return
-	}
-	Id_user, err := strconv.Atoi(cookie.Value)
-	if err != nil {
-		http.Error(w, "Не смогли извлечь куки", http.StatusBadRequest)
-		return
-	}
-
-	if Id_user == 0 {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
-
 	if r.Method == "POST" {
 		Id, err := strconv.Atoi(r.FormValue("Id"))
 		if err != nil {
