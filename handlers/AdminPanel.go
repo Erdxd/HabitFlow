@@ -7,7 +7,7 @@ import (
 )
 
 func (h *Handlers) CheckUsers(w http.ResponseWriter, r *http.Request) {
-	Users, err := admin.GetDataAboutAllUsers(db)
+	Users, err := admin.GetDataAboutAllUsers(h.DB)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
