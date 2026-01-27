@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type HabitFlow struct {
 	Id           int       `db:"id"`
@@ -19,10 +23,16 @@ type User struct {
 	Email            string `db:"email"`
 	Password         string `db:"passworduser"`
 	Telegram_chat_id int64  `db:"telegram_chat_id"`
+	Admin            bool   `db:"Admin"`
 }
 type UserBaseView struct {
 	Id_user  int    `db:"id_user"`
 	Username string `db:"username"`
 	Email    string `db:"email"`
 	Password string `db:"passworduser"`
+}
+type Claims struct {
+	User_id int
+	Admin   bool
+	jwt.RegisteredClaims
 }

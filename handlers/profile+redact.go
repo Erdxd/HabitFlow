@@ -70,7 +70,7 @@ func (h *Handlers) RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		Coincidence := encrypto.CHeckPassword(passwordfromdb, password)
+		Coincidence := encrypto.CheckPassword(passwordfromdb, password)
 		if Coincidence {
 			err := account.RedactLogin(h.DB, Id_user, newusername)
 			if err != nil {

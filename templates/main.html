@@ -166,12 +166,6 @@
         <div class="field">
             <input type="text" name="Habit_Name" required>
         </div>
-
-        <label>Дней подряд</label>
-        <div class="field">
-            <input type="number" min="0" name="Streak" required>
-        </div>
-
         <div class="checkbox">
             <input type="checkbox" name="Status_Today">
             <label>Выполнено сегодня</label>
@@ -196,7 +190,7 @@
                 <form action="/change" method="post">
                     <input type="hidden" name="Id" value="{{.Id}}">
                     <input type="hidden" name="Streak" value="{{.Streak}}">
-                    <button class="btn change">Сегодня</button>
+                    <button class="btn change">Выполнил сегодня</button>
                 </form>
 
                 <form action="/delete" method="post">

@@ -146,14 +146,6 @@ func (h *Handlers) ResetStatus(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err, status := database.GetStatus(h.DB, Id_user, Id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		if status == true {
-
-		}
 
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
