@@ -29,6 +29,7 @@ Telegram bot:       Golang(telegram-bot-api)
 ## Environment variables
 Database:       DATABASE_URL
 Telegram-bot:   TELEGRAM_BOT_TOKEN
+jwt token:      JWT_TOKEN
 
 ##  Project Status 
 Porject will be updated with more function and more intersting design 
