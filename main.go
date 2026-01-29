@@ -11,6 +11,8 @@ import (
 	"z/handlers"
 	"z/scheduler"
 
+	"z/middleware"
+
 	"github.com/joho/godotenv"
 )
 
@@ -19,7 +21,7 @@ var db *sql.DB
 func main() {
 
 	var err error
-	godotenv.Load("Database.env", "bot.env")
+	godotenv.Load("Database.env", "bot.env", "jwt.env")
 
 	db, err = database.InitDb()
 	if err != nil {
@@ -37,6 +39,7 @@ func main() {
 	go bottg.HandleMessages(bot1, db)
 	go s.Schedule(bot1)
 	go s.ScheduleForReset()
+
 	h := &handlers.Handlers{
 		DB: db,
 	}
@@ -49,6 +52,7 @@ func main() {
 	http.HandleFunc("/login", h.LoginPageHandler)
 	http.HandleFunc("/profile", h.ProfileHandler)
 	http.HandleFunc("/redact", h.RedactLoginHandler)
+	http.HandleFunc("/admin/users", middleware.AdminOnly(h.CheckUsers))
 
 	port := os.Getenv("PORT")
 	if port == "" {

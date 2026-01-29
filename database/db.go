@@ -74,7 +74,7 @@ func GetStreak(db *sql.DB, user_id, id int) (error, int) {
 
 }
 func ResetAllStatus(db *sql.DB) error {
-	SqlStatement := (`UPDATE "HabitFlow" SET status_today = false WHERE status_today = true`)
+	SqlStatement := (`UPDATE "HabitFlow" SET status_today = false`)
 	_, err := db.Exec(SqlStatement)
 	if err != nil {
 		return err

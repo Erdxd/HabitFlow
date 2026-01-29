@@ -3,9 +3,10 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"strconv"
 	"z/account"
+	"z/admin"
 	encrypto "z/hashing"
+	"z/jwt"
 	"z/model"
 )
 
@@ -49,7 +50,7 @@ func (h *Handlers) LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Неверный логин или пароль", http.StatusInternalServerError)
 			return
 		}
-		Coincidence := encrypto.CHeckPassword(passwordfromdb, Password)
+		Coincidence := encrypto.CheckPassword(passwordfromdb, Password)
 		if Coincidence {
 			Id_user, err := account.GetUserId(h.DB, Login)
 
@@ -58,10 +59,26 @@ func (h *Handlers) LoginPageHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+			Admin, err := admin.GetAdmin(h.DB, Id_user)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "Что-то пошло не так", http.StatusInternalServerError)
+				return
+			}
+			tokenstring, err := jwt.GenerateToken(Id_user, Admin)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "Что-то пошло не так", http.StatusInternalServerError)
+				return
+			}
+
 			http.SetCookie(w, &http.Cookie{
-				Name:  "id_user",
-				Value: strconv.Itoa(Id_user),
-				Path:  "/",
+				Name:     "token",
+				Value:    tokenstring,
+				Path:     "/",
+				MaxAge:   86400,
+				HttpOnly: true,
+				Secure:   true,
 			})
 			http.Redirect(w, r, "/", http.StatusSeeOther)
 		} else {
