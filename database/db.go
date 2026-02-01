@@ -81,3 +81,11 @@ func ResetAllStatus(db *sql.DB) error {
 	}
 	return nil
 }
+func DeleteAllHabit(db *sql.DB, user_id int) error {
+	SqlStatement := (`DELETE FROM "HabitFlow" WHERE user_id = $1`)
+	_, err := db.Exec(SqlStatement, user_id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -48,3 +48,12 @@ func ChangePasswordForUser(db *sql.DB, id_user int, newpasswordhashed string) er
 	}
 	return nil
 }
+func DeleteAccount(db *sql.DB, id_user int) error {
+	SqlStatement := (`DELETE FROM users WHERE id_user = $1 `)
+	_, err := db.Exec(SqlStatement, id_user)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}

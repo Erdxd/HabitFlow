@@ -10,6 +10,7 @@ func Encrypto(password string) (string, error) {
 	HasgedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Println("Failed to encrypt your password")
+		return "", err
 	}
 	return string(HasgedPassword), nil
 

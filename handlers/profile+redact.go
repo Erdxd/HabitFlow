@@ -48,15 +48,21 @@ func (h *Handlers) RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		Coincidence := encrypto.CheckPassword(passwordfromdb, password)
+		log.Println(passwordfromdb)
+		log.Println(password)
+		log.Println(Coincidence)
 		if Coincidence {
 			err := account.RedactLogin(h.DB, Id_user, newusername)
 			if err != nil {
+
 				http.Error(w, "Cant change your login", http.StatusBadRequest)
 				return
 			}
 
 		} else {
+
 			http.Error(w, "wrong password", http.StatusBadRequest)
 			return
 		}
