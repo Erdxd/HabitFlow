@@ -53,6 +53,7 @@ func main() {
 	http.HandleFunc("/profile", h.ProfileHandler)
 	http.HandleFunc("/redact", h.RedactLoginHandler)
 	http.HandleFunc("/admin/users", middleware.AdminOnly(h.CheckUsers))
+	http.HandleFunc("/admin/update-password", middleware.AdminOnly(h.UpdatePassword))
 
 	port := os.Getenv("PORT")
 	if port == "" {

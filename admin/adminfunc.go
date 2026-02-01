@@ -38,3 +38,13 @@ func GetAdmin(db *sql.DB, id_user int) (bool, error) {
 	}
 	return Admin, nil
 }
+func ChangePasswordForUser(db *sql.DB, id_user int, newpasswordhashed string) error {
+	SqlStatement := (`UPDATE users SET password = $1 WHERE id_user = $2`)
+
+	_, err := db.Exec(SqlStatement, newpasswordhashed, id_user)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}

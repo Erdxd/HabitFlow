@@ -10,4 +10,5 @@ func InitToken() {
 		panic("JWT TOKEN NOT SET IN ENV ")
 	}
 	JwtKey = []byte(JwtKeystr)
+
 }

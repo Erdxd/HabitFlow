@@ -26,7 +26,7 @@ var (
 	db            *sql.DB
 	tmplrofile    = template.Must(template.ParseFiles("templates/profile.html"))
 	tmplredact    = template.Must(template.ParseFiles("templates/redact.html"))
-	tmplAdminMain = template.Must(template.ParseFiles("templates/adminMain.html"))
+	tmplAdminMain = template.Must(template.ParseFiles("templates/admin.html"))
 )
 
 type Handlers struct {
