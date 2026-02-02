@@ -90,7 +90,7 @@ func (h *Handlers) ResetStatus(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err, streak := database.GetStreak(h.DB, Id_user, Id)
+		streak, err := database.GetStreak(h.DB, Id_user, Id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return

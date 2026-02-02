@@ -7,6 +7,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+var JwtKey []byte
+
 func GenerateToken(user_id int, admin bool) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	Claims := &model.Claims{

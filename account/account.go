@@ -105,3 +105,12 @@ func GetPasswordwithId(db *sql.DB, Id_user int) (string, error) {
 	return Password, nil
 
 }
+func RedactPassword(db *sql.DB, NewHashedPassword string, id_user int) error {
+	SqlStatement := (`UPDATE users SET password = $1 WHERE id_user = $2`)
+	_, err := db.Exec(SqlStatement, NewHashedPassword, id_user)
+	if err != nil {
+
+		return err
+	}
+	return nil
+}

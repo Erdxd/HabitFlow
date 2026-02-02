@@ -1,5 +1,7 @@
 package jwt
 
+/*
+
 import "os"
 
 var JwtKey []byte
@@ -12,3 +14,4 @@ func InitToken() {
 	JwtKey = []byte(JwtKeystr)
 
 }
+*/

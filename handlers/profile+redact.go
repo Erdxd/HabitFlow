@@ -72,3 +72,16 @@ func (h *Handlers) RedactLoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tmplredact.Execute(w, nil)
 }
+func (h *Handlers) RedactPassword(w http.ResponseWriter, r *http.Request) {
+	Id_user, err := h.Cookie_userID(w, r)
+	NewPassword := r.FormValue("Newpassword")
+	NewHashedPassword, err := encrypto.Encrypto(NewPassword)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	err = account.RedactPassword(h.DB, NewHashedPassword, Id_user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	http.Redirect(w, r, "/profile", http.StatusSeeOther)
+}

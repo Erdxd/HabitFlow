@@ -54,7 +54,7 @@ func (h *Handlers) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = database.DeleteAllHabit(h.DB, id_user)
+	err = database.DeleteAllHabits(h.DB, id_user)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Could not delete this account", http.StatusInternalServerError)
